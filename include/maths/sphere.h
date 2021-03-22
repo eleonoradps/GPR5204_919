@@ -25,34 +25,42 @@ SOFTWARE.
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include "maths/vector3.h"
-namespace maths {
-class Sphere
-{
-public:
-	Sphere() = default;
-	Sphere(float radius, maths::Vector3f center) : radius_(radius), center_(center) {};
-	~Sphere() = default;
+#include "aabb3.h"
 
-	float area() const {
-		const double pi = 3.14159265358979323846;
-		return 4 * pi * (radius_ * radius_) ;
-	}
-	
-	float volume() const {
-		const double pi = 3.14159265358979323846;
-		return 4 / 3 * pi * (radius_ * radius_ * radius_);
-	}
-	
-	void set_radius(float radius) { radius_ = radius; }
-	Vector3f center() const { return center_; }
-	float radius() const { return radius_; }
-	
+namespace maths {
+class Sphere {
+public:
+    Sphere() = default;
+
+    Sphere(float radius, maths::Vector3f center)
+        : radius_(radius),
+          center_(center) {
+    };
+    ~Sphere() = default;
+
+    float area() const {
+        const double pi = 3.14159265358979323846;
+        return 4 * pi * (radius_ * radius_);
+    }
+
+    float volume() const {
+        const double pi = 3.14159265358979323846;
+        return 4 / 3 * pi * (radius_ * radius_ * radius_);
+    }
+
+    void set_radius(float radius) { radius_ = radius; }
+    Vector3f center() const { return center_; }
+    float radius() const { return radius_; }
+
 private:
-	Vector3f center_ = {};
-	float radius_ = {};
+    Vector3f center_ = {};
+    float radius_ = {};
 };
 
 bool OverlapSphere(const Sphere& a, const Sphere& b);
 bool ContainSphere(const Sphere& a, const Sphere& b);
-	
-} // namespace maths
+bool AABBOverlapSphere(const AABB3& a, const Sphere& b);
+bool SphereContainAABB(const Sphere& sphere, const AABB3& aabb);
+bool AABBContainSphere(const Sphere& sphere, const AABB3& aabb);
+
+}  // namespace maths

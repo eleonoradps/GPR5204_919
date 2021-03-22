@@ -88,6 +88,7 @@ public:
     // Allows to write value at index.
     float& operator[](std::size_t index);
 
+    // This function makes a vector have a magnitude of 1.
     Vector4f Normalized() const;
 
     void Normalize();

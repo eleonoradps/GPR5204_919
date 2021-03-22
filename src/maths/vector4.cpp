@@ -120,6 +120,7 @@ float& Vector4f::operator[](std::size_t index) {
     return coord[index];
 }
 
+// This function makes a vector have a magnitude of 1.
 Vector4f Vector4f::Normalized() const {
     const float magnitude = Magnitude();
 

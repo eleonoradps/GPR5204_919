@@ -118,6 +118,7 @@ float Vector3f::SqrMagnitude() const {
     return x * x + y * y + z * z;
 }
 
+// This function calculates the angle between two vectors.
 radian_t Vector3f::AngleBetween(const Vector3f& v2) const {
     return AngleBetween(*this, v2);
 }
@@ -139,6 +140,7 @@ float& Vector3f::operator[](std::size_t index) {
     return coord[index];
 }
 
+// This function makes a vector have a magnitude of 1.
 Vector3f Vector3f::Normalized() const {
     const float magnitude = Magnitude();
 

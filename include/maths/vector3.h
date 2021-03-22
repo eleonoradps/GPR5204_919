@@ -85,6 +85,7 @@ public:
     // This function calculates the squared length of a vector.
     float SqrMagnitude() const;
 
+    // This function calculates the angle between two vectors.
     radian_t AngleBetween(const Vector3f& v2) const;
 
     static radian_t AngleBetween(const Vector3f& v1, const Vector3f& v2);
@@ -95,6 +96,7 @@ public:
     // Allows to write value at index.
     float& operator[](std::size_t index);
 
+    // This function makes a vector have a magnitude of 1.
     Vector3f Normalized() const;
 
     void Normalize();

@@ -24,29 +24,38 @@ SOFTWARE.
 */
 #include <cmath>
 #include "maths/vector2.h"
+#include "aabb2.h"
+
 namespace maths {
-	
+
 class Circle {
 public:
-	Circle() = default;
-	Circle(float radius, Vector2f center) : radius_(radius), center_(center) {};
-	~Circle() = default;
+    Circle() = default;
 
-	float area() const {
-		const double pi = 3.14159265358979323846;
-		return (pi * (radius_ * radius_) );
-	}
-	
-	void set_radius( const float radius) { radius_ = radius; }
-	Vector2f center() const { return center_; }
-	float radius() const { return radius_; }
-		
+    Circle(float radius, Vector2f center)
+        : radius_(radius),
+          center_(center) {
+    };
+    ~Circle() = default;
+
+    float area() const {
+        const double pi = 3.14159265358979323846;
+        return (pi * (radius_ * radius_));
+    }
+
+    void set_radius(const float radius) { radius_ = radius; }
+    Vector2f center() const { return center_; }
+    float radius() const { return radius_; }
+
 private:
-	Vector2f center_ = {};
-	float radius_ = {};
+    Vector2f center_ = {};
+    float radius_ = {};
 };
 
 bool OverlapCircle(const Circle& a, const Circle& b);
 bool ContainCircle(const Circle& a, const Circle& b);
-	
-} // namespace maths
+bool AABBOverlapCircle(const AABB2& a, const Circle& b);
+bool CircleContainAABB(const Circle& circle, const AABB2& aabb);
+bool AABBContainCircle(const Circle& circle, const AABB2& aabb);
+
+}  // namespace maths

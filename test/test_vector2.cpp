@@ -30,12 +30,12 @@ TEST(Maths, Vector2f_Addition) {
     const Vector2f a{2.0f, 3.0f};
     const Vector2f b{1.0f, 4.0f};
 
-    //Test operator + .
+    //Test operator +.
     Vector2f c = a + b;
     EXPECT_EQ(c.x, a.x + b.x);
     EXPECT_EQ(c.y, a.y + b.y);
 
-    //Test operator += .
+    //Test operator +=.
     const Vector2f d{3.0f, 4.0f};
     Vector2f e = d;
     e += a;
@@ -47,12 +47,12 @@ TEST(Maths, Vector2f_Substraction) {
     const Vector2f a{2.0f, 3.0f};
     const Vector2f b{1.0f, 4.0f};
 
-    //Test operator - .
+    //Test operator -.
     Vector2f c = a - b;
     EXPECT_EQ(c.x, a.x - b.x);
     EXPECT_EQ(c.y, a.y - b.y);
 
-    //Test operator -= .
+    //Test operator -=.
     const Vector2f d{3.0f, 4.0f};
     Vector2f e = d;
     e -= a;
@@ -64,12 +64,12 @@ TEST(Maths, Vector2f_MultiplicationByScalar) {
     const Vector2f a{2.0f, 3.0f};
     const float b = 4.0f;
 
-    //Test operator + .
+    //Test operator +.
     Vector2f c = a * b;
     EXPECT_EQ(c.x, a.x * b);
     EXPECT_EQ(c.y, a.y * b);
 
-    //Test operator += .
+    //Test operator +=.
     const Vector2f d{3.0f, 4.0f};
     Vector2f e = d;
     e *= b;
@@ -81,12 +81,12 @@ TEST(Maths, Vector2f_DivisionByScalar) {
     const Vector2f a{2.0f, 3.0f};
     const float b = 4.0f;
 
-    //Test operator / .
+    //Test operator /.
     Vector2f c = a / b;
     EXPECT_EQ(c.x, a.x / b);
     EXPECT_EQ(c.y, a.y / b);
 
-    //Test operator /= .
+    //Test operator /=.
     const Vector2f d{3.0f, 4.0f};
     Vector2f e = d;
     e /= b;
@@ -98,31 +98,39 @@ TEST(Maths, Vector2f_Equal) {
     const Vector2f a{ 2.0f, 3.0f };
     const Vector2f b = a;
 
-    //Test operator == .
-    EXPECT_TRUE(a.operator==(b));
+    //Test operator ==.
+    EXPECT_TRUE(a.x == b.x);
+    EXPECT_TRUE(a.y == b.y);
 }
 
 TEST(Maths, Vector2f_NotEqual) {
     const Vector2f a{ 2.0f, 3.0f };
     const Vector2f b{ 1.0f, 4.0f };
 
-    //Test operator != .
-    EXPECT_TRUE(a.operator!=(b));
+    //Test operator !=.
+    EXPECT_TRUE(a.x != b.x);
+    EXPECT_TRUE(a.y != b.y);
+}
+
+TEST(Maths, Vector2f_SubscriptOperator) {
+    const Vector2f a{ 2.0f, 3.0f };
+
+    //Test operator [].
+    EXPECT_EQ(a[0], 2.0f);
+    EXPECT_EQ(a[1], 3.0f);
 }
 
 TEST(Maths, Vector2f_Magnitude) {
     const Vector2f a{2.0f, 3.0f};
-    const float b = 4;
 
-    //Test .Magnitude() .
+    //Test .Magnitude().
     EXPECT_EQ(a.Magnitude(), std::sqrt((a.x * a.x) + (a.y * a.y)));
 }
 
 TEST(Maths, Vector2f_SqrMagnitude) {
     const Vector2f a{2.0f, 3.0f};
-    const float b = 4;
 
-    //Test .SqrMagnitude() .
+    //Test .SqrMagnitude().
     EXPECT_EQ(a.SqrMagnitude(), (a.x * a.x) + (a.y * a.y));
 }
 
@@ -133,16 +141,16 @@ TEST(Maths, Vector2f_DotProduct) {
     //Test .Dot() .
     EXPECT_EQ(a.Dot(b), 0.0f);
 
-    //Test static Dot() .
+    //Test static Dot().
     EXPECT_EQ(maths::Vector2f::Dot(a, b), 0.0f);
 
     const Vector2f c{2.0f, 3.0f};
     const Vector2f d{1.0f, 1.0f};
 
-    //Test .Dot() .
+    //Test .Dot().
     EXPECT_EQ(c.Dot(d), c.x * d.x + c.y * d.y);
 
-    //Test static Dot() .
+    //Test static Dot().
     EXPECT_EQ(maths::Vector2f::Dot(c, d), c.x * d.x + c.y * d.y);
 }
 
@@ -150,12 +158,12 @@ TEST(Maths, Vector2f_CrossProduct) {
     const Vector2f a{2.0f, 3.0f};
     const Vector2f b{1.0f, -3.0f};
 
-    //Test .Cross() .
+    //Test .Cross().
     EXPECT_EQ(a.Cross(b).x, 0);
     EXPECT_EQ(a.Cross(b).y, 0);
     EXPECT_EQ(a.Cross(b).z, a.x * b.y - a.y * b.x);
 
-    //Test static Cross() .
+    //Test static Cross().
     EXPECT_EQ(maths::Vector2f::Cross(a, b).x, 0);
     EXPECT_EQ(maths::Vector2f::Cross(a, b).y, 0);
     EXPECT_EQ(maths::Vector2f::Cross(a, b).z, a.x * b.y - a.y * b.x);
@@ -165,11 +173,11 @@ TEST(Maths, Vector2f_AngleBetween) {
     const Vector2f a{0.0f, 3.0f};
     const Vector2f b{1.0f, 0.0f};
 
-    //Test .AngleBetween() .
+    //Test .AngleBetween().
     EXPECT_EQ(a.AngleBetween(b),
               maths::acos(a.Dot(b) / (a.Magnitude() * b.Magnitude())));
 
-    //Test static AngleBetween() .
+    //Test static AngleBetween().
     EXPECT_EQ(maths::Vector2f::AngleBetween(a, b),
               maths::acos(maths::Vector2f::Dot(a, b) / (a.Magnitude() *
                   b.Magnitude())));
@@ -179,10 +187,10 @@ TEST(Maths, Vector2f_Normalize) {
     const Vector2f a{0.0f, 3.0f};
     const Vector2f b = a.Normalized();
 
-    //Test .Normalized() .
+    //Test .Normalized().
     EXPECT_EQ(b.Magnitude(), 1.0f);
 
-    //Test .Normalize() .
+    //Test .Normalize().
     Vector2f c = a;
     c.Normalize();
     EXPECT_EQ(c.Magnitude(), 1.0f);
@@ -243,7 +251,7 @@ TEST(Maths, Vector2f_Rotation) {
     const degree_t b = degree_t(45.f);
     const radian_t c = b;
 
-    //Test .Rotation() .
+    //Test .Rotation().
     EXPECT_EQ(a.Rotation(b).x,
               (a.x * maths::cos(c)) + (a.y * -maths::sin(c)));
     EXPECT_EQ(a.Rotation(b).y,
