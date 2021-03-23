@@ -24,7 +24,9 @@ SOFTWARE.
 
 #pragma once
 
+#include <queue>
 #include <vector>
+#include <functional>
 #include "maths/vector2.h"
 
 using NodeIndex = int;
@@ -33,12 +35,17 @@ class Node {
 public:
 	Node() = default;
 
-	std::vector<NodeIndex> Neighbors() {
+	std::vector<NodeIndex> neighbors() const {
 		return neighbors_;
 	}
 
-	maths::Vector2f Position() {
+	maths::Vector2f position() const {
 		return position_;
+	}
+
+	bool operator<(const Node& other) const {
+		return neighbors_ < other.neighbors_ && position_.x < other.position_.x
+		&& position_.y < other.position_.y;
 	}
 
 private:
@@ -49,7 +56,32 @@ private:
 class Map {
 public:
 	// add node
-	std::vector<Node> /*ou std::vector<NodeIndex>*/ FindPath(const Node& startNode, const Node& endNode);
+	static float Distance(maths::Vector2f pos1, maths::Vector2f pos2) {
+		return abs(sqrt((pow(pos2.x - pos1.x, 2)) + (pow(pos2.y - pos1.y, 2))));
+	}
+	static std::vector<Node> FindPath(const Node& star_node, Node& end_node, std::vector<Node>& graph);
 private:
 	std::vector<Node> graph_;
+};
+
+template<typename T, typename priority_t>
+class PriorityQueue {
+public:
+typedef std::pair<priority_t, T> PQElement;
+std::priority_queue<PQElement, std::vector<PQElement>,
+std::greater<PQElement>> elements;
+
+bool empty() const {
+	return elements.empty();
+}
+
+void put(T item, priority_t priority) {
+	elements.emplace(priority, item);
+}
+
+T get() {
+	T best_item = elements.top().second;
+	elements.pop();
+	return best_item;
+}
 };

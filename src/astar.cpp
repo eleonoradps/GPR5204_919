@@ -22,16 +22,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <map>
 #include "astar.h"
 
-std::vector<Node> Map::FindPath(const Node& startNode, const Node& endNode) {
-    //Find path with A* algorithm
-    std::vector<Node> openSet = std::vector<Node>();
-    std::vector<Node> closedSet = std::vector<Node>();
-    openSet.push_back(startNode);
+std::vector<Node> Map::FindPath(const Node& star_node, Node& end_node, std::vector<Node>& graph) {
+    
+    std::map<Node, Node> came_from;
+    std::map<Node, float> cost_so_far;
+    
+    PriorityQueue<Node, float> frontier;
+    frontier.put(star_node, 0);
 
-    /*while (openSet.size() > 0) {
-    	
-    }*/
-    return openSet; // temporary return
+    came_from[star_node] = star_node;
+    cost_so_far[star_node] = 0;
+
+    while (!frontier.empty()) {
+        Node current = frontier.get();
+
+        if (current.position() == end_node.position()) {
+                break;
+        }
+
+        for (NodeIndex next : current.neighbors()){
+            const float new_cost = cost_so_far[current]
+        	+ Distance(current.position(), graph[next].position());
+            if (cost_so_far.find(graph[next]) == cost_so_far.end()
+                || new_cost < cost_so_far[graph[next]]) {
+                cost_so_far[graph[next]] = new_cost;
+                const float priority = new_cost
+            	+ Distance(graph[next].position(), end_node.position());
+                frontier.put(graph[next], priority);
+                came_from[graph[next]] = current;
+            }
+        }
+    }
+    return graph;
 }
