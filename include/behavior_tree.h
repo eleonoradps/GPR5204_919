@@ -23,3 +23,72 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+#include <iostream>
+#include <vector>
+
+
+enum class Status {
+
+	kBaseStatus = 0,
+	kSuccess,
+	kFailure,
+	kRunning
+};
+
+class Behavior {
+
+public:
+	Behavior() : status_(Status::kBaseStatus) {}
+	virtual ~Behavior() {}
+
+	virtual void Initialize() {}
+	virtual Status Update() = 0;
+	virtual void Terminate() {}
+
+	Status CheckStatus();
+	Status status() const;
+
+private:
+	Status status_;
+};
+
+using Behaviors = std::vector<std::unique_ptr<Behavior>>;
+
+class Decorator : public Behavior {
+
+public:
+	Decorator(std::unique_ptr<Behavior> child) : child_(std::move(child)) {}
+protected:
+	std::unique_ptr<Behavior> child_;
+};
+
+class Composite : public Behavior {
+
+public:
+	void AddChild(std::unique_ptr<Behavior> child);
+	void RemoveChild(std::unique_ptr<Behavior>);
+	void EmptyChildren();
+protected:
+	Behaviors children_;
+};
+
+class Sequence : public Composite {
+
+protected:
+	virtual ~Sequence() {}
+	virtual void Initialize();
+	virtual Status Update();
+
+	Behaviors::iterator current_child;
+};
+
+class Selector : public Composite {
+
+protected:
+	virtual ~Selector() {}
+	virtual void Initialize();
+	virtual Status Update();
+
+	Behaviors::iterator current_child;
+};

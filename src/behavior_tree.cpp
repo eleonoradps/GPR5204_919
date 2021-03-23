@@ -21,3 +21,36 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+#include "..\include\behavior_tree.h"
+
+Status Behavior::CheckStatus() {
+	return Status();
+}
+
+Status Behavior::status() const {
+	return Status();
+}
+
+void Composite::AddChild(std::unique_ptr<Behavior> child) {
+}
+
+void Composite::RemoveChild(std::unique_ptr<Behavior>) {
+}
+
+void Composite::EmptyChildren() {
+}
+
+void Sequence::Initialize() {
+}
+
+Status Sequence::Update() {
+	return Status();
+}
+
+void Selector::Initialize() {
+}
+
+Status Selector::Update() {
+	return Status();
+}
