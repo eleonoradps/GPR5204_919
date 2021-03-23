@@ -25,36 +25,48 @@ SOFTWARE.
 #include <map>
 #include "astar.h"
 
-std::vector<Node> Map::FindPath(const Node& star_node, Node& end_node, std::vector<Node>& graph) {
-    
-    std::map<Node, Node> came_from;
-    std::map<Node, float> cost_so_far;
-    
-    PriorityQueue<Node, float> frontier;
-    frontier.put(star_node, 0);
+std::vector<Node> Map::FindPath(const Node& star_node, Node& end_node, std::vector<Node>& graph)
+{
+	std::map<Node, Node> came_from;
+	std::map<Node, float> cost_so_far;
 
-    came_from[star_node] = star_node;
-    cost_so_far[star_node] = 0;
+	PriorityQueue<Node, float> frontier;
+	frontier.put(star_node, 0);
 
-    while (!frontier.empty()) {
-        Node current = frontier.get();
+	came_from[star_node] = star_node;
+	cost_so_far[star_node] = 0;
+	Node current;
+	std::vector<Node> path;
 
-        if (current.position() == end_node.position()) {
-                break;
-        }
+	while (!frontier.empty())
+	{
+		current = frontier.get();
 
-        for (NodeIndex next : current.neighbors()){
-            const float new_cost = cost_so_far[current]
-        	+ Distance(current.position(), graph[next].position());
-            if (cost_so_far.find(graph[next]) == cost_so_far.end()
-                || new_cost < cost_so_far[graph[next]]) {
-                cost_so_far[graph[next]] = new_cost;
-                const float priority = new_cost
-            	+ Distance(graph[next].position(), end_node.position());
-                frontier.put(graph[next], priority);
-                came_from[graph[next]] = current;
-            }
-        }
-    }
-    return graph;
+		if (current.position() == end_node.position())
+		{
+			break;
+		}
+
+		for (NodeIndex next : current.neighbors())
+		{
+			const float new_cost = cost_so_far[current]
+				+ Distance(current.position(), graph[next].position());
+			if (cost_so_far.find(graph[next]) == cost_so_far.end()
+				|| new_cost < cost_so_far[graph[next]])
+			{
+				cost_so_far[graph[next]] = new_cost;
+				const float priority = new_cost
+					+ Distance(graph[next].position(), end_node.position());
+				frontier.put(graph[next], priority);
+				came_from[graph[next]] = current;
+			}
+		}
+	}
+	while (current.position() != star_node.position())
+	{
+		current = came_from[current];
+		path.push_back(current);
+	}
+	std::reverse(path.begin(), path.end());
+	return path;
 }

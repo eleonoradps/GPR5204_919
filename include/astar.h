@@ -34,7 +34,12 @@ using NodeIndex = int;
 class Node {
 public:
 	Node() = default;
-
+	Node(maths::Vector2f position, std::vector<NodeIndex> neighbors)
+	{
+		position_ = position;
+		neighbors_ = neighbors;
+	}
+	
 	std::vector<NodeIndex> neighbors() const {
 		return neighbors_;
 	}
@@ -46,6 +51,11 @@ public:
 	bool operator<(const Node& other) const {
 		return neighbors_ < other.neighbors_ && position_.x < other.position_.x
 		&& position_.y < other.position_.y;
+	}
+
+	bool operator==(const Node& other) const {
+		return neighbors_ == other.neighbors_&& position_.x == other.position_.x
+			&& position_.y == other.position_.y;
 	}
 
 private:
