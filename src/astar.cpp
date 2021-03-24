@@ -24,9 +24,9 @@ SOFTWARE.
 
 #include <unordered_map>
 #include "astar.h"
+#include "inverted_priority_queue.h"
 
-std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeIndex& end_node)
-{
+std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeIndex& end_node) {
 	// The node with the lowest cost to go to the key node.
 	std::unordered_map<NodeIndex, NodeIndex> came_from;
 	// The lowest cost to go to a node.
@@ -62,9 +62,14 @@ std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeInde
 			}
 		}
 	}
+	// Return an empty vector of NodeIndex if there is no path to go to the end node.
+	if (current != end_node) {
+		std::vector<NodeIndex> no_path_vector;
+		return no_path_vector;
+	}
 	// Add NodeIndex of nodes with the lowest cost to go to each node.
 	path.push_back(current);
-	while (current != start_node){
+	while (current != start_node) {
 		current = came_from[current];
 		path.push_back(current);
 	}

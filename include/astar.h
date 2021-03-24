@@ -24,26 +24,26 @@ SOFTWARE.
 
 #pragma once
 
-#include <queue>
 #include <vector>
-#include <functional>
 #include "maths/vector2.h"
 
 using NodeIndex = int;
 
+// Class used to represent a node.
 class Node {
 public:
 	Node() = default;
-	Node(maths::Vector2f position, std::vector<NodeIndex> neighbors)
-	{
+	Node(maths::Vector2f position, std::vector<NodeIndex> neighbors) {
 		position_ = position;
 		neighbors_ = neighbors;
 	}
-	
+
+	// Return neighbors of a node.
 	std::vector<NodeIndex> neighbors() const {
 		return neighbors_;
 	}
 
+	// Return the position of a node.
 	maths::Vector2f position() const {
 		return position_;
 	}
@@ -63,14 +63,18 @@ private:
 	maths::Vector2f position_;
 };
 
+// Class used to represent a map.
 class Map {
 public:
-	void AddNode(Node node){
+	// Push a node in graph_.
+	void AddNode(Node node) {
 		graph_.push_back(node);
 	}
-	std::vector<Node> GetGraph(){
+	// Return graph_
+	std::vector<Node> GetGraph() {
 		return graph_;
 	}
+	// Calculate the distance between two vector2f.
 	static float Distance(maths::Vector2f pos1, maths::Vector2f pos2) {
 		return abs(sqrt((pow(pos2.x - pos1.x, 2)) + (pow(pos2.y - pos1.y, 2))));
 	}
@@ -78,30 +82,4 @@ public:
 	std::vector<NodeIndex> FindPath(const NodeIndex& start_node, const NodeIndex& end_node);
 private:
 	std::vector<Node> graph_;
-};
-
-// Queue who sort the element from lowest to higher.
-template<typename T, typename priority_t>
-class PriorityQueue {
-public:
-typedef std::pair<priority_t, T> PQElement;
-std::priority_queue<PQElement, std::vector<PQElement>,
-std::greater<PQElement>> elements;
-
-// Return if the queue is empty.
-bool empty() const {
-	return elements.empty();
-}
-
-// Put elements in the queue.
-void put(T item, priority_t priority) {
-	elements.emplace(priority, item);
-}
-
-// Return the element with the lowest priority.
-T get() {
-	T best_item = elements.top().second;
-	elements.pop();
-	return best_item;
-}
 };
