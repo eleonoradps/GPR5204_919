@@ -27,30 +27,73 @@ SOFTWARE.
 
 namespace astar
 {
-	TEST(Astar, Node_Position)
-	{
+	TEST(Astar, Node_Position){
+		
 	}
 
-	TEST(Astar, Map_AddNode)
-	{
+	TEST(Astar, Map_AddNode){
+		
 	}
 
 	TEST(Astar, Map_FindPath)
 	{
-		Node node0(maths::Vector2f(1.1f, 2.2f), std::vector<NodeIndex>{1}); // created node0
-		Node node1(maths::Vector2f(0.1f, 0.2f), std::vector<NodeIndex>{0}); // created node1
-		std::vector<Node> expectedPath{node0, node1};
-		std::vector<Node> graph; // created graph
-		graph.push_back(node0); // add node0 in graph
-		graph.push_back(node1); // add node1 in graph
-		std::vector<Node> path = Map::FindPath(node0, node1, graph);
+		// Test 2 nodes -> 1 path
+		const Node node0(maths::Vector2f(0.0f, 0.0f), std::vector<NodeIndex>{1}); // Created node0.
+		const Node node1(maths::Vector2f(1.0f, 0.0f), std::vector<NodeIndex>{0}); // Created node1.
+		Map map; // Instantiate map
+		std::vector<NodeIndex> expectedPath{0, 1}; // Created expected path.
+		map.AddNode(node0); // Add node0 in graph
+		map.AddNode(node1); // Add node1 in graph
+		std::vector<NodeIndex> path = map.FindPath(0, 1); // Find the fastest path 
+		EXPECT_TRUE(std::equal(path.begin(), path.end(), expectedPath.begin())); // Check if the path is the same as the expected path
+		std::reverse(expectedPath.begin(), expectedPath.end()); // Reverse the expetced path
+		EXPECT_FALSE(std::equal(path.begin(), path.end(), expectedPath.begin())); // Check if the path is not the same as the expected path
+	}
+
+	TEST(Astar, Map_FindPath2)
+	{
+		// Test 
+		Node node0(maths::Vector2f(0.0f, 0.0f), std::vector<NodeIndex>{1, 3});
+		Node node1(maths::Vector2f(2.0f, 2.0f), std::vector<NodeIndex>{0, 2});
+		Node node2(maths::Vector2f(5.0f, 2.0f), std::vector<NodeIndex>{1, 3, 4});
+		Node node3(maths::Vector2f(4.0f, -2.0f), std::vector<NodeIndex>{0, 2});
+		Node node4(maths::Vector2f(8.0f, 0.0f), std::vector<NodeIndex>{2});
+		Map map;
+		std::vector<NodeIndex> expectedPath{ 0, 1, 2, 4 };
+		map.AddNode(node0);
+		map.AddNode(node1);
+		map.AddNode(node2);
+		map.AddNode(node3);
+		map.AddNode(node4);
+		std::vector<NodeIndex> path = map.FindPath(0, 4);
 		EXPECT_TRUE(std::equal(path.begin(), path.end(), expectedPath.begin()));
 		std::reverse(expectedPath.begin(), expectedPath.end());
 		EXPECT_FALSE(std::equal(path.begin(), path.end(), expectedPath.begin()));
 	}
 
-	TEST(Astar, Astar_PriorityQueue)
+	TEST(Astar, Map_FindPath3)
 	{
+		// Test 
+		Node node0(maths::Vector2f(0.0f, 0.0f), std::vector<NodeIndex>{1, 3});
+		Node node1(maths::Vector2f(2.0f, 2.0f), std::vector<NodeIndex>{0, 2});
+		Node node2(maths::Vector2f(5.0f, 2.0f), std::vector<NodeIndex>{1, 3, 4});
+		Node node3(maths::Vector2f(4.0f, -2.0f), std::vector<NodeIndex>{0, 2});
+		Node node4(maths::Vector2f(8.0f, 0.0f), std::vector<NodeIndex>{2});
+		Map map;
+		std::vector<NodeIndex> expectedPath{ 0, 1, 2, 4 };
+		map.AddNode(node0);
+		map.AddNode(node1);
+		map.AddNode(node2);
+		map.AddNode(node3);
+		map.AddNode(node4);
+		std::vector<NodeIndex> path = map.FindPath(0, 4);
+		EXPECT_TRUE(std::equal(path.begin(), path.end(), expectedPath.begin()));
+		std::reverse(expectedPath.begin(), expectedPath.end());
+		EXPECT_FALSE(std::equal(path.begin(), path.end(), expectedPath.begin()));
+	}
+
+	TEST(Astar, Astar_PriorityQueue){
+		
 	}
 	
 } // namespace astar

@@ -22,51 +22,53 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <map>
+#include <unordered_map>
 #include "astar.h"
 
-std::vector<Node> Map::FindPath(const Node& star_node, Node& end_node, std::vector<Node>& graph)
+std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeIndex& end_node)
 {
-	std::map<Node, Node> came_from;
-	std::map<Node, float> cost_so_far;
+	// The node with the lowest cost to go to the key node.
+	std::unordered_map<NodeIndex, NodeIndex> came_from;
+	// The lowest cost to go to a node.
+	std::unordered_map<NodeIndex, float> cost_so_far;
 
-	PriorityQueue<Node, float> frontier;
-	frontier.put(star_node, 0);
+	// Next nodes where we will check these neighbors.
+	PriorityQueue<NodeIndex, float> frontier;
+	frontier.put(start_node, 0);
 
-	came_from[star_node] = star_node;
-	cost_so_far[star_node] = 0;
-	Node current;
-	std::vector<Node> path;
+	came_from[start_node] = start_node;
+	cost_so_far[start_node] = 0;
+	NodeIndex current;
+	std::vector<NodeIndex> path;
 
-	while (!frontier.empty())
-	{
-		current = frontier.get();
+	while (!frontier.empty()) {
+		current = frontier.get(); // Get the lowest priority node.
 
-		if (current.position() == end_node.position())
-		{
+		if (current == end_node) {
 			break;
 		}
 
-		for (NodeIndex next : current.neighbors())
-		{
+		for (NodeIndex next : graph_[current].neighbors()) {
 			const float new_cost = cost_so_far[current]
-				+ Distance(current.position(), graph[next].position());
-			if (cost_so_far.find(graph[next]) == cost_so_far.end()
-				|| new_cost < cost_so_far[graph[next]])
-			{
-				cost_so_far[graph[next]] = new_cost;
-				const float priority = new_cost
-					+ Distance(graph[next].position(), end_node.position());
-				frontier.put(graph[next], priority);
-				came_from[graph[next]] = current;
+				+ Distance(graph_[current].position(), graph_[next].position()); // Cost to go to the current node + distance to go to the neighbor.
+			if (cost_so_far.find(next) == cost_so_far.end() // Check if the node has been checked.
+				|| new_cost < cost_so_far[next]) { // Check if cost to go to the next node from current is less than the lowest cost saved to go to the next node.
+				cost_so_far[next] = new_cost; // Put the new lowest cost to go to next node.
+				const float priority = new_cost 
+					+ Distance(graph_[next].position()
+					, graph_[end_node].position()); // Calculate the heuristic.
+				frontier.put(next, priority); // Add to nodes where we will check these neighbors.
+				came_from[next] = current; // Save the current node with the lowest cost to go to the next node.
 			}
 		}
 	}
-	while (current.position() != star_node.position())
-	{
+	// Add NodeIndex of nodes with the lowest cost to go to each node.
+	path.push_back(current);
+	while (current != start_node){
 		current = came_from[current];
 		path.push_back(current);
 	}
+	// Reverse path to start with the start node.
 	std::reverse(path.begin(), path.end());
 	return path;
 }

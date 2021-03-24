@@ -65,15 +65,22 @@ private:
 
 class Map {
 public:
-	// add node
+	void AddNode(Node node){
+		graph_.push_back(node);
+	}
+	std::vector<Node> GetGraph(){
+		return graph_;
+	}
 	static float Distance(maths::Vector2f pos1, maths::Vector2f pos2) {
 		return abs(sqrt((pow(pos2.x - pos1.x, 2)) + (pow(pos2.y - pos1.y, 2))));
 	}
-	static std::vector<Node> FindPath(const Node& star_node, Node& end_node, std::vector<Node>& graph);
+	// Find the lowest cost path with A* from the start node to the last node.
+	std::vector<NodeIndex> FindPath(const NodeIndex& start_node, const NodeIndex& end_node);
 private:
 	std::vector<Node> graph_;
 };
 
+// Queue who sort the element from lowest to higher.
 template<typename T, typename priority_t>
 class PriorityQueue {
 public:
@@ -81,14 +88,17 @@ typedef std::pair<priority_t, T> PQElement;
 std::priority_queue<PQElement, std::vector<PQElement>,
 std::greater<PQElement>> elements;
 
+// Return if the queue is empty.
 bool empty() const {
 	return elements.empty();
 }
 
+// Put elements in the queue.
 void put(T item, priority_t priority) {
 	elements.emplace(priority, item);
 }
 
+// Return the element with the lowest priority.
 T get() {
 	T best_item = elements.top().second;
 	elements.pop();
