@@ -22,10 +22,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#define _USE_MATH_DEFINES
+
 #include <math.h>
 #include "maths/vector3.h"
 #include "aabb3.h"
+#include "Material.h"
 
 namespace maths {
 class Sphere {
@@ -51,10 +52,13 @@ public:
     void set_radius(float radius) { radius_ = radius; }
     Vector3f center() const { return center_; }
     float radius() const { return radius_; }
+    Material material() const { return material_; }
+    void set_material(Material material) { material_ = material; }
 
 private:
     Vector3f center_ = {};
     float radius_ = {};
+    Material material_ = {};
 };
 
 bool OverlapSphere(const Sphere& a, const Sphere& b);

@@ -3,6 +3,7 @@
 
 #include <maths/circle.h>
 #include <maths/sphere.h>
+#include <corecrt_math_defines.h>
 
 
 TEST(Maths, Circle_CalculateArea)

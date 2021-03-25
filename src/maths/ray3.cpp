@@ -28,44 +28,61 @@ namespace maths {
 
 bool Ray3::IntersectSphere(const Sphere& sphere) {
 
-    const Vector3f v = sphere.center() - origin_;
-    const float d = v.Dot(unit_direction_); // Distance to closest point to sphere center
-    float distance;
-    if (d < 0) {
-        return false;
-    }
+    //const Vector3f v = sphere.center() - origin_;
+    //const float d = v.Dot(unit_direction_); // Distance to closest point to sphere center
+    //float distance;
+    //if (d < 0) {
+    //    return false;
+    //}
 
-    const float squaredDistance = v.Dot(v) - (d * d); // squared Distance between closest point to sphere center
-    const float radius2 = sphere.radius() * sphere.radius();
-    if (squaredDistance > radius2) {
-        return false;
-    }
+    //const float squaredDistance = v.Dot(v) - (d * d); // squared Distance between closest point to sphere center
+    //const float radius2 = sphere.radius() * sphere.radius();
+    //if (squaredDistance > radius2) {
+    //    return false;
+    //}
 
-    const auto q = std::sqrt(radius2 - squaredDistance);
+    //const auto q = std::sqrt(radius2 - squaredDistance);
 
-    const auto t0 = d + q;
-    const auto t1 = d - q;
+    //const auto t0 = d + q;
+    //const auto t1 = d - q;
 
-    bool hasHit = false;
-    if (t0 >= 0) {
-        distance = t0;
-        hasHit = true;
-    }
+    //bool hasHit = false;
+    //if (t0 >= 0) {
+    //    distance = t0;
+    //    hasHit = true;
+    //}
 
-    if (t1 >= 0) {
-        if (!hasHit || t1 < distance) {
-            distance = t1;
-            hasHit = true;
-        }
-    }
+    //if (t1 >= 0) {
+    //    if (!hasHit || t1 < distance) {
+    //        distance = t1;
+    //        hasHit = true;
+    //    }
+    //}
 
-    if (!hasHit) {
-        return false;
-    }
+    //if (!hasHit) {
+    //    return false;
+    //}
 
-    // calculate the position where the ray hit
-    hit_position_ = origin_ + unit_direction_ * distance;
+    //// calculate the position where the ray hit
+    //hit_position_ = origin_ + direction_ * distance;
+    
+    
+    double distance;
+    const Vector3f origin = origin_;
+    const Vector3f direction = direction_;
+    const Vector3f oc = origin - sphere.center();
+    const double b = 2 * Vector3f::Dot(oc, direction);
+    const double c = Vector3f::Dot(oc, oc) - sphere.radius() * sphere.radius();
+    double disc = b * b - 4 * c;
+    if (disc < 1e-4) return false;
+    disc = sqrt(disc);
+    const double t0 = -b - disc;
+    const double t1 = -b + disc;
+    distance = (t0 < t1) ? t0 : t1;
+    hit_position_ = origin_ + direction_ * distance;
+    
     return true;
+
 }
 
 bool Ray3::IntersectAABB3(const AABB3& aabb) {

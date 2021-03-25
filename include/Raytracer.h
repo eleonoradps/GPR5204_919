@@ -24,64 +24,31 @@ SOFTWARE.
 */
 
 #include <vector>
+#include <fstream>
+#include <algorithm>
 
 #include "maths/vector3.h"
-#include "maths/vector4.h"
 #include "maths/sphere.h"
 #include "maths/ray3.h"
 
 
-class  Material {
-public:
-	Material() = default;
-	Material(maths::Vector4f albedo, float reflexionIndex) : albedo_(albedo), reflexionIndex_(reflexionIndex) {}
-	
-private:
-	maths::Vector3f color_;
-	maths::Vector4f albedo_ = maths::Vector4f(1.0f, 0.0f, 0.0f, 0.0f);
-	float reflexionIndex_;
-};
-
-struct Light
-{
-	
+struct Light {
+	Light() = default;
+	//maths::Vector3f position{ 20.0f,20.0f,20.0f };
+	maths::Vector3f position{ 0.0f,0.0f,0.0f };
 };
 
 class Raytracer {
 public:
 
-	maths::Vector3f Reflect()
-	{
+	/*maths::Vector3f Reflect();*/
 
-		return;
-	}
+	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Vector3f& normal, Material& material);
+	
+	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> spheres, Light light);
 
-	bool ObjectIntersect(maths::Ray3 ray, std::vector<maths::Sphere> spheres, maths::Vector3f normal){}
-
-	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection,std::vector<maths::Sphere>, Light light) {}
-
-
-	void Render(float width, float height, float fov, std::vector<maths::Sphere> spheres, Light light )
-	{
-		std::vector<maths::Vector3f> frameBuffer(width * height); // will hold the color for each pixel;
-		for(int i = 0; i<height; ++i)
-		{
-			for(int j = 0; j < width; ++j)
-			{
-				float dir_x = (i + 0.5) - width / 2.;
-				float dir_y = -(j + 0.5) + height / 2.; 
-				float dir_z = -height / (2. * tan(fov / 2.));
-				maths::Vector3f rayDirection = maths::Vector3f(dir_x, dir_y, dir_z).Normalized();
-				
-				frameBuffer[i + j * width] = RayCast(maths::Vector3f(0.0f, 0.0f, 0.0f), rayDirection, spheres, light);
-			}
-		}
-
-		// TO DO :
-		// Use the frmabuffer data to draw the image;
-	}
-
+	void Render(float width, float height, float fov, std::vector<maths::Sphere> spheres, Light light);
 	
 private:
-	std::vector<maths::Vector3f> frameBuffer_;
+	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };
 };

@@ -23,39 +23,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include "maths/sphere.h"
-#include "maths/aabb3.h"
-#include "maths/plane.h"
+#include "maths/vector4.h"
+#include "maths/vector3.h"
 
-namespace maths {
-	
-class Ray3 {
+class Material {
 public:
-	Ray3() = default;
-	Ray3(Vector3f& origin, Vector3f& direction) : origin_(origin), direction_(direction) {}
+	Material() = default;
+	Material(float reflexionIndex, maths::Vector3f color) : reflexionIndex_(reflexionIndex), color_(color) {}
 
-	// Return a point along the ray from a given value
-	Vector3f PointInRay(float value) const {
-		return { origin_ + direction_ * value };
-	}
-
-	Vector3f origin() const { return origin_; }
-	Vector3f direction() const { return direction_; }
-	Vector3f unit_direction() const { return unit_direction_; }
-	Vector3f hit_position() const { return hit_position_; }
-
-	// Return true if ray intersect a sphere
-	bool IntersectSphere(const Sphere& sphere);
-	// Return true if ray intersect a AABB
-	bool IntersectAABB3(const AABB3& aabb);
-	// Return true if ray intersect a plane
-	bool IntersectPlane(const Plane& plane);
-
+	maths::Vector3f color() const { return color_; }
+	float reflexionIndex() const { return reflexionIndex_; }
+	
 private:
-	Vector3f origin_ = {};
-	Vector3f direction_ = {};
-	Vector3f unit_direction_ = direction_.Normalized();
-	Vector3f hit_position_;
+	maths::Vector3f color_{255.0f,255.0f,255.0f};
+	float reflexionIndex_ = 1.0f;
 };
-
-} // namespace maths
