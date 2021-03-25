@@ -28,7 +28,7 @@ SOFTWARE.
 
 namespace path {
 
-std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeIndex& end_node) {
+std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 	// The node with the lowest cost to go to the key node.
 	std::unordered_map<NodeIndex, NodeIndex> came_from;
 	// The lowest cost to go to a node.

@@ -27,17 +27,6 @@ SOFTWARE.
 #include "paths/inverted_priority_queue.h"
 
 namespace path {
-	
-TEST(Astar, Map_AddNode) {
-	// Test adding node in the graph.
-	Map map;
-	const Node node(maths::Vector2f(0.0f, 0.0f), std::vector<NodeIndex>{});
-	const Node false_node(maths::Vector2f(2.0f, 6.0f), std::vector<NodeIndex>{});
-	map.AddNode(node);
-	std::vector<Node> graph = map.GetGraph();
-	EXPECT_TRUE(node == graph[0]);
-	EXPECT_FALSE(false_node == graph[0]);
-}
 
 TEST(Astar, Map_FindPath) {
 	// Test 2 nodes & 1 path.
@@ -101,14 +90,14 @@ TEST(Astar, Map_FindPath4) {
 	Node node3(maths::Vector2f(5.0f, 2.0f), std::vector<NodeIndex>{3});
 	Node node4(maths::Vector2f(8.0f, 1.0f), std::vector<NodeIndex>{});
 	Map map;
-	std::vector<NodeIndex> expected_path;
+	std::vector<NodeIndex> empty_path;
 	map.AddNode(node0);
 	map.AddNode(node1);
 	map.AddNode(node2);
 	map.AddNode(node3);
 	map.AddNode(node4);
 	std::vector<NodeIndex> path = map.FindPath(0, 4);
-	EXPECT_TRUE(std::equal(path.begin(), path.end(), expected_path.begin()));
+	EXPECT_TRUE(std::equal(path.begin(), path.end(), empty_path.begin()));
 }
 
 TEST(Astar, Astar_PriorityQueue) {

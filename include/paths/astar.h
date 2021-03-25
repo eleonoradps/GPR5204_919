@@ -50,16 +50,6 @@ public:
 		return position_;
 	}
 
-	bool operator<(const Node& other) const {
-		return neighbors_ < other.neighbors_&& position_.x < other.position_.x
-			&& position_.y < other.position_.y;
-	}
-
-	bool operator==(const Node& other) const {
-		return neighbors_ == other.neighbors_ && position_.x == other.position_.x
-			&& position_.y == other.position_.y;
-	}
-
 private:
 	std::vector<NodeIndex> neighbors_;
 	maths::Vector2f position_;
@@ -72,16 +62,13 @@ public:
 	void AddNode(Node node) {
 		graph_.push_back(node);
 	}
-	// Return graph_
-	std::vector<Node> GetGraph() {
-		return graph_;
-	}
+	
 	// Calculate the distance between two vector2f.
 	static float Distance(maths::Vector2f pos1, maths::Vector2f pos2) {
-		return abs(sqrt((pow(pos2.x - pos1.x, 2)) + (pow(pos2.y - pos1.y, 2))));
+		return std::abs(std::sqrt((std::pow(pos2.x - pos1.x, 2)) + (std::pow(pos2.y - pos1.y, 2))));
 	}
 	// Find the lowest cost path with A* from the start node to the last node.
-	std::vector<NodeIndex> FindPath(const NodeIndex& start_node, const NodeIndex& end_node);
+	std::vector<NodeIndex> FindPath(NodeIndex start_node, NodeIndex end_node);
 private:
 	std::vector<Node> graph_;
 };
