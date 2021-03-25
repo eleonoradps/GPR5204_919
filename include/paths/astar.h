@@ -27,7 +27,9 @@ SOFTWARE.
 #include <vector>
 #include "maths/vector2.h"
 
-using NodeIndex = int;
+namespace path {
+	
+	using NodeIndex = int;
 
 // Class used to represent a node.
 class Node {
@@ -49,12 +51,12 @@ public:
 	}
 
 	bool operator<(const Node& other) const {
-		return neighbors_ < other.neighbors_ && position_.x < other.position_.x
-		&& position_.y < other.position_.y;
+		return neighbors_ < other.neighbors_&& position_.x < other.position_.x
+			&& position_.y < other.position_.y;
 	}
 
 	bool operator==(const Node& other) const {
-		return neighbors_ == other.neighbors_&& position_.x == other.position_.x
+		return neighbors_ == other.neighbors_ && position_.x == other.position_.x
 			&& position_.y == other.position_.y;
 	}
 
@@ -83,3 +85,5 @@ public:
 private:
 	std::vector<Node> graph_;
 };
+
+} // namespace path

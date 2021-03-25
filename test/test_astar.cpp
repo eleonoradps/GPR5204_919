@@ -23,10 +23,11 @@ SOFTWARE.
 */
 
 #include <gtest/gtest.h>
-#include "astar.h"
-#include "inverted_priority_queue.h"
+#include "paths/astar.h"
+#include "paths/inverted_priority_queue.h"
 
-namespace astar {
+namespace path {
+	
 TEST(Astar, Map_AddNode) {
 	// Test adding node in the graph.
 	Map map;
