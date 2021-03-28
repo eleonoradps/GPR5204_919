@@ -92,9 +92,9 @@ bool Ray3::IntersectAABB3(const AABB3& aabb) {
     Vector3f dirfrac;
     float distance;
 
-    dirfrac.x = 1.0f / unit_direction().x;
-    dirfrac.y = 1.0f / unit_direction().y;
-    dirfrac.z = 1.0f / unit_direction().z;
+    dirfrac.x = 1.0f / direction().x;
+    dirfrac.y = 1.0f / direction().y;
+    dirfrac.z = 1.0f / direction().z;
     // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
     const float t1 = (lb.x - origin_.x) * dirfrac.x;
     const float t2 = (rt.x - origin_.x) * dirfrac.x;

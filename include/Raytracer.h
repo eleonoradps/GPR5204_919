@@ -45,9 +45,9 @@ public:
 
 	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Vector3f& normal, Material& material);
 	
-	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> spheres, Light light);
+	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> &spheres, Light light);
 
-	void Render(float width, float height, float fov, std::vector<maths::Sphere> spheres, Light light);
+	void Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres, Light light);
 	
 private:
 	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };

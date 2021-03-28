@@ -41,7 +41,6 @@ public:
 
 	Vector3f origin() const { return origin_; }
 	Vector3f direction() const { return direction_; }
-	Vector3f unit_direction() const { return unit_direction_; }
 	Vector3f hit_position() const { return hit_position_; }
 
 	// Return true if ray intersect a sphere
@@ -54,7 +53,6 @@ public:
 private:
 	Vector3f origin_ = {};
 	Vector3f direction_ = {};
-	Vector3f unit_direction_ = direction_.Normalized();
 	Vector3f hit_position_;
 };
 

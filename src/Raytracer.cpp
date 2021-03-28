@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-# include "Raytracer.h"
+#include "Raytracer.h"
+#include <cassert>
 
 bool Raytracer::ObjectIntersect(maths::Ray3& ray, 
 	std::vector<maths::Sphere>& spheres, maths::Vector3f& normal, Material& material)
@@ -41,7 +42,7 @@ bool Raytracer::ObjectIntersect(maths::Ray3& ray,
 }
 
 maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
-	maths::Vector3f rayDirection, std::vector<maths::Sphere> spheres, Light light)
+	maths::Vector3f rayDirection, std::vector<maths::Sphere>& spheres, Light light)
 {
 	maths::Vector3f normal;
 	maths::Ray3 ray{ cameraOrigin, rayDirection };
@@ -58,24 +59,26 @@ maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
 			* rayDirection.y, (-1) + rayDirection.z);
 		float facingRatio = std::max(0.0f, normal.Dot(inverseDirection));
 		//return (hitObject_material.color() * dt) * 0.5f;
-		return (hitObject_material.color() * facingRatio) * hitObject_material.reflexionIndex();
+		return (hitObject_material.color() * facingRatio);
 	}
 }
 
-void Raytracer::Render(float width, float height, float fov, std::vector<maths::Sphere> spheres, Light light)
+void Raytracer::Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres, Light light)
 {
-	std::vector<maths::Vector3f> frameBuffer(width * height); // will hold the color for each pixel;
+	int total = width * height;
+	std::vector<maths::Vector3f> frameBuffer(total); // will hold the color for each pixel;
 	for (int i = 0; i < height; ++i)
 	{
 		for (int j = 0; j < width; ++j)
 		{
+			assert(total > j + i * width);
 			float dir_x = (j + 0.5f) - width / 2.;
 			float dir_y = -(i + 0.5f) + height / 2.;
 			float dir_z = -height / (2.0 * tan(fov / 2.0));
 
 			maths::Vector3f rayDirection = maths::Vector3f(dir_x, dir_y, dir_z).Normalized();
 
-			frameBuffer[i + j * width] = RayCast(maths::Vector3f(0.0f, 0.0f, 0.0f),
+			frameBuffer[ j + i *width] = RayCast(maths::Vector3f(0.0f, 0.0f, 0.0f),
 				rayDirection, spheres, light);
 		}
 	}
