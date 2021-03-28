@@ -23,10 +23,12 @@ SOFTWARE.
 */
 
 #include <unordered_map>
-#include "astar.h"
-#include "inverted_priority_queue.h"
+#include "paths/astar.h"
+#include "paths/inverted_priority_queue.h"
 
-std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeIndex& end_node) {
+namespace path {
+
+std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 	// The node with the lowest cost to go to the key node.
 	std::unordered_map<NodeIndex, NodeIndex> came_from;
 	// The lowest cost to go to a node.
@@ -54,9 +56,9 @@ std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeInde
 			if (cost_so_far.find(next) == cost_so_far.end() // Check if the node has been checked.
 				|| new_cost < cost_so_far[next]) { // Check if cost to go to the next node from current is less than the lowest cost saved to go to the next node.
 				cost_so_far[next] = new_cost; // Put the new lowest cost to go to next node.
-				const float priority = new_cost 
+				const float priority = new_cost
 					+ Distance(graph_[next].position()
-					, graph_[end_node].position()); // Calculate the heuristic.
+						, graph_[end_node].position()); // Calculate the heuristic.
 				frontier.put(next, priority); // Add to nodes where we will check these neighbors.
 				came_from[next] = current; // Save the current node with the lowest cost to go to the next node.
 			}
@@ -74,6 +76,7 @@ std::vector<NodeIndex> Map::FindPath(const NodeIndex& start_node, const NodeInde
 		path.push_back(current);
 	}
 	// Reverse path to start with the start node.
-	std::reverse(path.begin(), path.end());
-	return path;
+	return { path.rbegin(), path.rend() };
 }
+
+} // End namespace path.
