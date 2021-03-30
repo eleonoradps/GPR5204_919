@@ -40,7 +40,11 @@ class Behavior {
 
 public:
 	Behavior() : status_(Status::kBaseStatus) {}
-	virtual ~Behavior() {}
+	Behavior(const Behavior& other) = delete;
+	Behavior(Behavior&& other) noexcept = default;
+	Behavior& operator=(const Behavior& other) = delete;
+	Behavior& operator=(Behavior&& other) noexcept = default;
+	virtual ~Behavior() = default;
 
 	virtual void Initialize() {}
 	virtual Status Update() = 0;
@@ -66,29 +70,25 @@ protected:
 class Composite : public Behavior {
 
 public:
-	void AddChild(std::unique_ptr<Behavior> child);
-	void RemoveChild(std::unique_ptr<Behavior>);
-	void EmptyChildren();
+	Composite(Behaviors children) : children_(std::move(children)) {}
+	std::size_t currentChildIndex() const { return current_child_index_; }
 protected:
 	Behaviors children_;
+	std::size_t current_child_index_ = 0;
 };
 
 class Sequence : public Composite {
 
-protected:
-	virtual ~Sequence() {}
-	virtual void Initialize();
-	virtual Status Update();
-
-	Behaviors::iterator current_child;
+public:
+	using Composite::Composite;
+	void Initialize() override;
+	Status Update() override;
 };
 
 class Selector : public Composite {
 
-protected:
-	virtual ~Selector() {}
-	virtual void Initialize();
-	virtual Status Update();
-
-	Behaviors::iterator current_child;
+public:
+	using Composite::Composite;
+	void Initialize() override;
+	Status Update() override;
 };

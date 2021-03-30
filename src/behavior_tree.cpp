@@ -25,32 +25,73 @@ SOFTWARE.
 #include "..\include\behavior_tree.h"
 
 Status Behavior::CheckStatus() {
-	return Status();
+
+	if (status_ != Status::kRunning) {
+
+		Initialize();
+	}
+
+	status_ = Update();
+
+	if (status_ != Status::kRunning) {
+
+		Terminate();
+	}
+
+	return status_;
 }
 
 Status Behavior::status() const {
-	return Status();
-}
 
-void Composite::AddChild(std::unique_ptr<Behavior> child) {
-}
-
-void Composite::RemoveChild(std::unique_ptr<Behavior>) {
-}
-
-void Composite::EmptyChildren() {
+	return status_;
 }
 
 void Sequence::Initialize() {
+
+	current_child_index_ = 0;
 }
 
 Status Sequence::Update() {
-	return Status();
+
+	while (true) {
+
+		Status s = (children_[current_child_index_])->CheckStatus();
+
+		if (s != Status::kSuccess) {
+
+			return s;
+		}
+
+		++current_child_index_;
+
+		if (current_child_index_ == children_.size()) {
+
+			return Status::kSuccess;
+		}
+	}
 }
 
 void Selector::Initialize() {
+
+	current_child_index_ = 0;
 }
 
 Status Selector::Update() {
-	return Status();
+
+	while (true) {
+
+		Status s = (children_[current_child_index_])->CheckStatus();
+
+		if (s != Status::kFailure) {
+
+			return s;
+		}
+
+		++current_child_index_;
+
+		if (current_child_index_ == children_.size())
+		{
+			return Status::kFailure;
+		}
+	}
 }
