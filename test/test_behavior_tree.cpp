@@ -25,6 +25,7 @@ SOFTWARE.
 #include <gtest/gtest.h>
 #include "behavior_tree.h"
 
+// Test class to mimick a basic Behavior.
 class LeafTest : public Behavior {
 
 public:
@@ -39,6 +40,7 @@ private:
 	Status status_;
 };
 
+// Test a successful Sequence.
 TEST(Sequence, SequenceAllSuccess) {
 
 	Behaviors children;
@@ -55,6 +57,7 @@ TEST(Sequence, SequenceAllSuccess) {
 	EXPECT_EQ(a.currentChildIndex(), 3);
 }
 
+// Test a failing Sequence.
 TEST(Sequence, SequenceAllFailure) {
 
 	Behaviors children;
@@ -71,6 +74,7 @@ TEST(Sequence, SequenceAllFailure) {
 	EXPECT_EQ(a.currentChildIndex(), 0);
 }
 
+// Test when no child satisfies the condition.
 TEST(Selector, SelectorAllFailure) {
 
 	Behaviors children;
@@ -87,6 +91,7 @@ TEST(Selector, SelectorAllFailure) {
 	EXPECT_EQ(a.currentChildIndex(), 3);
 }
 
+// Test when one child is successful.
 TEST(Selector, SelectorOneSuccess) {
 
 	Behaviors children;
@@ -103,6 +108,7 @@ TEST(Selector, SelectorOneSuccess) {
 	EXPECT_EQ(a.currentChildIndex(), 1);
 }
 
+// Test when two children are successful to see if it stops at the first one.
 TEST(Selector, SelectorTwoSuccess) {
 
 	Behaviors children;

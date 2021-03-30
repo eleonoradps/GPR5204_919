@@ -24,6 +24,7 @@ SOFTWARE.
 
 #include "..\include\behavior_tree.h"
 
+// Updates the Behavior's Status.
 Status Behavior::CheckStatus() {
 
 	if (status_ != Status::kRunning) {
@@ -46,11 +47,20 @@ Status Behavior::status() const {
 	return status_;
 }
 
+std::size_t Composite::currentChildIndex() const { 
+	
+	return current_child_index_; 
+}
+
+// Sets the base Status of the Behavior.
+// Here sets the children index at 0.
 void Sequence::Initialize() {
 
 	current_child_index_ = 0;
 }
 
+// This is where the action/behavior is ran. 
+// Returns Status if failure or success.
 Status Sequence::Update() {
 
 	while (true) {
@@ -71,11 +81,15 @@ Status Sequence::Update() {
 	}
 }
 
+// Sets the base Status of the Behavior.
+// Here sets the children index at 0.
 void Selector::Initialize() {
 
 	current_child_index_ = 0;
 }
 
+// This is where the action/behavior is ran. 
+// Returns Status if failure or success.
 Status Selector::Update() {
 
 	while (true) {
