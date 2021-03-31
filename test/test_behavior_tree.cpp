@@ -22,3 +22,105 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#include <gtest/gtest.h>
+#include "behavior_tree.h"
+
+// Test class to mimick a basic Behavior.
+class LeafTest : public Behavior {
+
+public:
+	LeafTest(Status status) : status_(status) {}
+
+	Status Update() override
+	{
+		return status_;
+	}
+
+private:
+	Status status_;
+};
+
+// Test a successful Sequence.
+TEST(Sequence, SequenceAllSuccess) {
+
+	Behaviors children;
+
+	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+
+	Sequence a(std::move(children));
+
+	Status s = a.Update();
+
+	EXPECT_EQ(s, Status::kSuccess);
+	EXPECT_EQ(a.currentChildIndex(), 3);
+}
+
+// Test a failing Sequence.
+TEST(Sequence, SequenceAllFailure) {
+
+	Behaviors children;
+
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+
+	Sequence a(std::move(children));
+
+	Status s = a.Update();
+
+	EXPECT_EQ(s, Status::kFailure);
+	EXPECT_EQ(a.currentChildIndex(), 0);
+}
+
+// Test when no child satisfies the condition.
+TEST(Selector, SelectorAllFailure) {
+
+	Behaviors children;
+
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+
+	Selector a(std::move(children));
+
+	Status s = a.Update();
+
+	EXPECT_EQ(s, Status::kFailure);
+	EXPECT_EQ(a.currentChildIndex(), 3);
+}
+
+// Test when one child is successful.
+TEST(Selector, SelectorOneSuccess) {
+
+	Behaviors children;
+
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+
+	Selector a(std::move(children));
+
+	Status s = a.Update();
+
+	EXPECT_EQ(s, Status::kSuccess);
+	EXPECT_EQ(a.currentChildIndex(), 1);
+}
+
+// Test when two children are successful to see if it stops at the first one.
+TEST(Selector, SelectorTwoSuccess) {
+
+	Behaviors children;
+
+	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+
+	Selector a(std::move(children));
+
+	Status s = a.Update();
+
+	EXPECT_EQ(s, Status::kSuccess);
+	EXPECT_EQ(a.currentChildIndex(), 1);
+}

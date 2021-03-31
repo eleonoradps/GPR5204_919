@@ -24,33 +24,88 @@ SOFTWARE.
 
 #include "..\include\behavior_tree.h"
 
+// Updates the Behavior's Status.
 Status Behavior::CheckStatus() {
-	return Status();
+
+	if (status_ != Status::kRunning) {
+
+		Initialize();
+	}
+
+	status_ = Update();
+
+	if (status_ != Status::kRunning) {
+
+		Terminate();
+	}
+
+	return status_;
 }
 
 Status Behavior::status() const {
-	return Status();
+
+	return status_;
 }
 
-void Composite::AddChild(std::unique_ptr<Behavior> child) {
+std::size_t Composite::currentChildIndex() const { 
+	
+	return current_child_index_; 
 }
 
-void Composite::RemoveChild(std::unique_ptr<Behavior>) {
-}
-
-void Composite::EmptyChildren() {
-}
-
+// Sets the base Status of the Behavior.
+// Here sets the children index at 0.
 void Sequence::Initialize() {
+
+	current_child_index_ = 0;
 }
 
+// This is where the action/behavior is ran. 
+// Returns Status if failure or success.
 Status Sequence::Update() {
-	return Status();
+
+	while (true) {
+
+		Status s = (children_[current_child_index_])->CheckStatus();
+
+		if (s != Status::kSuccess) {
+
+			return s;
+		}
+
+		++current_child_index_;
+
+		if (current_child_index_ == children_.size()) {
+
+			return Status::kSuccess;
+		}
+	}
 }
 
+// Sets the base Status of the Behavior.
+// Here sets the children index at 0.
 void Selector::Initialize() {
+
+	current_child_index_ = 0;
 }
 
+// This is where the action/behavior is ran. 
+// Returns Status if failure or success.
 Status Selector::Update() {
-	return Status();
+
+	while (true) {
+
+		Status s = (children_[current_child_index_])->CheckStatus();
+
+		if (s != Status::kFailure) {
+
+			return s;
+		}
+
+		++current_child_index_;
+
+		if (current_child_index_ == children_.size())
+		{
+			return Status::kFailure;
+		}
+	}
 }
