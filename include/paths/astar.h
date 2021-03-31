@@ -50,7 +50,7 @@ public:
 		return position_;
 	}
 
-	Node operator=(Node node)  {
+	Node& operator=(Node node)  {
 		position_ = node.position_;
 		neighbors_ = node.neighbors_;
 		return *this;
