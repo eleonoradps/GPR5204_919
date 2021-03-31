@@ -24,6 +24,7 @@ SOFTWARE.
 */
 
 #include "maths/vector3.h"
+#include "Material.h"
 
 namespace maths
 {
@@ -50,9 +51,13 @@ public:
 	
 	Vector3f point() const { return { point_ }; }
 	Vector3f normal() const { return { normal_ }; }
+	void SetMaterial(Material material) { material_ = material; }
+	Material material() const { return material_; }
+	
 private:
 	Vector3f point_;
 	Vector3f normal_;
-	};
+	Material material_;
+};
 
 } // namespace maths

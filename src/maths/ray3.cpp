@@ -26,7 +26,7 @@ SOFTWARE.
 
 namespace maths {
 
-bool Ray3::IntersectSphere(const Sphere& sphere) {
+bool Ray3::IntersectSphere(const Sphere& sphere, Vector3f& hitPosition) {
 
     //const Vector3f v = sphere.center() - origin_;
     //const float d = v.Dot(unit_direction_); // Distance to closest point to sphere center
@@ -79,7 +79,7 @@ bool Ray3::IntersectSphere(const Sphere& sphere) {
     const double t0 = -b - disc;
     const double t1 = -b + disc;
     distance = (t0 < t1) ? t0 : t1;
-    hit_position_ = origin_ + direction_ * distance;
+    hitPosition = origin_ + direction_ * distance;
     
     return true;
 
@@ -125,7 +125,7 @@ bool Ray3::IntersectAABB3(const AABB3& aabb) {
     return true;
 }
 
-bool Ray3::IntersectPlane(const Plane& plane) {
+bool Ray3::IntersectPlane(const Plane& plane, Vector3f& hitPosition) {
     const float s = direction_.Dot(plane.normal());
     if (s > 0) {
         return false;
@@ -137,7 +137,7 @@ bool Ray3::IntersectPlane(const Plane& plane) {
     }
 
     // calculate the position where the ray hit
-    hit_position_ = origin_ + (direction_ * distance);
+    hitPosition = origin_ + (direction_ * distance);
     return true;
 }
 

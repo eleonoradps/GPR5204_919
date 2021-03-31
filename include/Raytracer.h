@@ -30,12 +30,20 @@ SOFTWARE.
 #include "maths/vector3.h"
 #include "maths/sphere.h"
 #include "maths/ray3.h"
+#include "maths/plane.h"
 
 
 struct Light {
 	Light() = default;
 	//maths::Vector3f position{ 20.0f,20.0f,20.0f };
-	maths::Vector3f position{ 0.0f,0.0f,0.0f };
+	maths::Vector3f position{ -35.0f,0.0f,-16.0f };
+	maths::Vector3f direction{ 1.0f,0.0f,0.0f };
+};
+
+struct hitInfos
+{
+	maths::Vector3f normal;
+	maths::Vector3f hitPosition;
 };
 
 class Raytracer {
@@ -43,11 +51,11 @@ public:
 
 	/*maths::Vector3f Reflect();*/
 
-	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Vector3f& normal, Material& material);
+	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Plane planel, Material& material, hitInfos& hitInfos);
 	
-	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> &spheres, Light light);
+	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> &spheres, maths::Plane scenePlane, Light light);
 
-	void Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres, Light light);
+	void Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane,Light light);
 	
 private:
 	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };

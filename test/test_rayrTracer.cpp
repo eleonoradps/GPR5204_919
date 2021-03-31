@@ -16,11 +16,14 @@ TEST(Raytracing, Raytracing_ImageOutput)
 	Material materialTest3(1.0f, colorTest3);
 
 
-	int width = 1920;
-	int heigth = 1080;
+	int width = 1366;
+	int heigth = 768;
 
-	maths::Sphere sphere1(3.0f, maths::Vector3f(-3.0f, 0.0f, -16.0f));
-	maths::Sphere sphere3(2.0f, maths::Vector3f(-3.0f, -6.0f, -20.0f));
+	maths::Plane plane(maths::Vector3f(0.0f, -10.0f, -10.0f), maths::Vector3f(0.0f, 1.0f, 0.0f));
+	plane.SetMaterial(materialTest2);
+	
+	maths::Sphere sphere1(3.0f, maths::Vector3f(-3.0f, 5.0f, -16.0f));
+	maths::Sphere sphere3(2.0f, maths::Vector3f(6.0f, 5.0f, -16.0f));
 	sphere1.set_material(materialTest);
 	sphere3.set_material(materialTest3);
 	Light light;
@@ -32,5 +35,5 @@ TEST(Raytracing, Raytracing_ImageOutput)
 	Raytracer raytracer;
 	//float fov = 3.14159265358979323846 / 3;
 	float fov = 51.52f;
-	raytracer.Render(width, heigth, fov, spheres, light);
+	raytracer.Render(width, heigth, fov, spheres, plane, light);
 }

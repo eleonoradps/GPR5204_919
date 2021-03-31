@@ -23,55 +23,85 @@ SOFTWARE.
 */
 
 #include "Raytracer.h"
+#include <omp.h>
 #include <cassert>
 
-bool Raytracer::ObjectIntersect(maths::Ray3& ray, 
-	std::vector<maths::Sphere>& spheres, maths::Vector3f& normal, Material& material)
+bool Raytracer::ObjectIntersect(maths::Ray3& ray,
+	std::vector<maths::Sphere>& spheres, maths::Plane plane, Material& material, hitInfos& hitInfo)
 {
+	maths::Vector3f tmpHitPosition;
 	for (int i = 0; i < spheres.size(); ++i)
 	{
-		if (ray.IntersectSphere(spheres[i]))
+		if (ray.IntersectSphere(spheres[i],hitInfo.hitPosition))
 		{
-			normal = maths::Vector3f(ray.hit_position() - spheres[i].center()).Normalized();
+			hitInfo.normal= maths::Vector3f(hitInfo.hitPosition - spheres[i].center()).Normalized();
 			//normal = maths::Vector3f(spheres[i].center() - ray.hit_position() / spheres[i].radius()).Normalized;
 			material = spheres[i].material();
 			return true;
 		}
 	}
+	/*if(ray.IntersectPlane(plane,tmpHitPosition))
+	{
+		material = plane.material();
+		return true;
+	}*/
 	return false;
 }
 
 maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
-	maths::Vector3f rayDirection, std::vector<maths::Sphere>& spheres, Light light)
+	maths::Vector3f rayDirection, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane, Light light)
 {
-	maths::Vector3f normal;
 	maths::Ray3 ray{ cameraOrigin, rayDirection };
 	Material hitObject_material;
-	if (!ObjectIntersect(ray, spheres, normal, hitObject_material))
+	hitInfos hitInfo;
+	if (!ObjectIntersect(ray, spheres, scenePlane, hitObject_material, hitInfo))
 	{
 		return backgroundColor_;
 	}
 	else
 	{
-		maths::Vector3f light_direction{ light.position - ray.hit_position() };
-		float dt = (light.position - ray.hit_position()).Magnitude();
+		maths::Vector3f light_direction{ light.position - hitInfo.hitPosition };
+		//maths::Vector3f light_direction = light.direction;
+		light_direction.Normalize();
+		maths::Vector3f inverseLightDirection = maths::Vector3f(
+			(-1) * light_direction.x, (-1) * light_direction.y, (-1) * light_direction.z);
+
+		//Compute shadow ray to check if point is in shadow
+		maths::Vector3f shadowRayOrigin(hitInfo.hitPosition + hitInfo.normal*1e-4);
+		maths::Ray3 shadowRay(shadowRayOrigin, inverseLightDirection);
+		Material tmpMaterial;
+		hitInfos shadowHitInfo;
+		if(ObjectIntersect(shadowRay,spheres,scenePlane,tmpMaterial,shadowHitInfo))
+		{
+			return hitObject_material.color() * 0.0f;
+		}
+
+		//Point is not in the shadow
+		//
+		//float dt = (light.position - ray.hit_position()).Magnitude();
 		maths::Vector3f inverseDirection = maths::Vector3f((-1) * rayDirection.x, (-1)
 			* rayDirection.y, (-1) + rayDirection.z);
-		float facingRatio = std::max(0.0f, normal.Dot(inverseDirection));
+
+		float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseLightDirection));
+		//float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseDirection));
+		
 		//return (hitObject_material.color() * dt) * 0.5f;
-		return (hitObject_material.color() * facingRatio);
+		
+		//return (hitObject_material.color() * facingRatio);
+		return hitObject_material.color();
 	}
 }
 
-void Raytracer::Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres, Light light)
+void Raytracer::Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres,maths::Plane scenePlane, Light light)
 {
 	int total = width * height;
 	std::vector<maths::Vector3f> frameBuffer(total); // will hold the color for each pixel;
+	
+	#pragma omp parallel for
 	for (int i = 0; i < height; ++i)
 	{
 		for (int j = 0; j < width; ++j)
 		{
-			assert(total > j + i * width);
 			float dir_x = (j + 0.5f) - width / 2.;
 			float dir_y = -(i + 0.5f) + height / 2.;
 			float dir_z = -height / (2.0 * tan(fov / 2.0));
@@ -79,7 +109,7 @@ void Raytracer::Render(float width, float height, float fov, std::vector<maths::
 			maths::Vector3f rayDirection = maths::Vector3f(dir_x, dir_y, dir_z).Normalized();
 
 			frameBuffer[ j + i *width] = RayCast(maths::Vector3f(0.0f, 0.0f, 0.0f),
-				rayDirection, spheres, light);
+				rayDirection, spheres,scenePlane, light);
 		}
 	}
 
