@@ -36,7 +36,7 @@ SOFTWARE.
 struct Light {
 	Light() = default;
 	//maths::Vector3f position{ 20.0f,20.0f,20.0f };
-	maths::Vector3f position{ -35.0f,0.0f,-16.0f };
+	maths::Vector3f position{ 35.0f,0.0f,-16.0f };
 	maths::Vector3f direction{ 1.0f,0.0f,0.0f };
 };
 
@@ -44,6 +44,7 @@ struct hitInfos
 {
 	maths::Vector3f normal;
 	maths::Vector3f hitPosition;
+	float distance;
 };
 
 class Raytracer {
@@ -51,11 +52,13 @@ public:
 
 	/*maths::Vector3f Reflect();*/
 
-	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Plane planel, Material& material, hitInfos& hitInfos);
+	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Plane plane, Material& material, hitInfos& hitInfos, float& distance);
 	
 	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> &spheres, maths::Plane scenePlane, Light light);
 
-	void Render(float width, float height, float fov, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane,Light light);
+	void Render(int width, int height, float fov, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane,Light light);
+
+	void SceneGeneration(const int sphereNumber, const float sphereMaxSize, const float sphereMinSize);
 	
 private:
 	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };

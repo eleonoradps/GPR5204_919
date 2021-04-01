@@ -44,7 +44,7 @@ public:
 	Vector3f hit_position() const { return hit_position_; }
 
 	// Return true if ray intersect a sphere
-	bool IntersectSphere(const Sphere& sphere, Vector3f& hitPosition);
+	bool IntersectSphere(const Sphere& sphere, Vector3f& hitPosition, float& distance);
 	// Return true if ray intersect a AABB
 	bool IntersectAABB3(const AABB3& aabb);
 	// Return true if ray intersect a plane
