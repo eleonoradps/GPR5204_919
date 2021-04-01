@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #include <unordered_map>
-#include "paths/astar.h"
+#include "paths/path.h"
 #include "paths/inverted_priority_queue.h"
 
 namespace path {
@@ -49,7 +49,8 @@ std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 		for (NodeIndex next : graph_[current].neighbors()) {
 			// The cost to get to the current node added to the distance to the neighbor.
 			const float new_cost = cost_so_far_[current]
-				+ maths::Vector2f{ graph_[current].position().x
+				+ maths::Vector2f {
+				    graph_[current].position().x
 					- graph_[next].position().x
 					, graph_[current].position().y
 					- graph_[next].position().y }.Magnitude(); 
@@ -62,7 +63,8 @@ std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 				cost_so_far_[next] = new_cost; 
 				// Calculate the heuristic.
 				const float priority = new_cost
-					+ maths::Vector2f{ graph_[next].position().x
+					+ maths::Vector2f {
+					    graph_[next].position().x
 						- graph_[end_node].position().x
 						, graph_[next].position().y
 						- graph_[end_node].position().y }.Magnitude();

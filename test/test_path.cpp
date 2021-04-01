@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 #include <gtest/gtest.h>
-#include "paths/astar.h"
+#include "paths/path.h"
 #include "paths/inverted_priority_queue.h"
 
 namespace path {
