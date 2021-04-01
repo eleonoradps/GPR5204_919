@@ -31,11 +31,9 @@ namespace path {
 TEST(Astar, Map_FindPath) {
 	// A test with 2 nodes and 1 path.
 	// Create node0.
-	Node node0(maths::Vector2f(0.0f, 0.0f)
-		, std::vector<NodeIndex>{1});
+	Node node0(maths::Vector2f(0.0f, 0.0f), {1});
 	// Create node1.
-	Node node1(maths::Vector2f(1.0f, 0.0f)
-		, std::vector<NodeIndex>{0});
+	Node node1(maths::Vector2f(1.0f, 0.0f), {0});
 	// Instantiate map.
 	Map map;
 	// Create expected path.
@@ -54,16 +52,11 @@ TEST(Astar, Map_FindPath) {
 	EXPECT_FALSE(std::equal(path.begin(), path.end(), expected_path.begin()));
 
 	// A test with 5 nodes and 2 path going into 1 path.
-	node0 = Node(maths::Vector2f(0.0f, 0.0f)
-		, std::vector<NodeIndex>{1, 3});
-	node1 = Node(maths::Vector2f(2.0f, 2.0f)
-		, std::vector<NodeIndex>{0, 2});
-	Node node2(maths::Vector2f(5.0f, 2.0f)
-		, std::vector<NodeIndex>{1, 3, 4});
-	Node node3(maths::Vector2f(4.0f, -2.0f)
-		, std::vector<NodeIndex>{0, 2});
-	Node node4(maths::Vector2f(8.0f, 0.0f)
-		, std::vector<NodeIndex>{2});
+	node0 = Node(maths::Vector2f(0.0f, 0.0f), {1, 3});
+	node1 = Node(maths::Vector2f(2.0f, 2.0f), {0, 2});
+	Node node2(maths::Vector2f(5.0f, 2.0f), {1, 3, 4});
+	Node node3(maths::Vector2f(4.0f, -2.0f), {0, 2});
+	Node node4(maths::Vector2f(8.0f, 0.0f), {2});
 	map.Reset();
 	expected_path = {0, 1, 2, 4};
 	map.AddNode(node0);
@@ -77,16 +70,11 @@ TEST(Astar, Map_FindPath) {
 	EXPECT_FALSE(std::equal(path.begin(), path.end(), expected_path.begin()));
 
 	// A test with 5 node and 2 path.
-	node0 = Node(maths::Vector2f(0.0f, 0.0f)
-		, std::vector<NodeIndex>{1, 3});
-	node1 = Node(maths::Vector2f(0.5f, 1.0f)
-		, std::vector<NodeIndex>{0, 2});
-	node2 = Node(maths::Vector2f(1.5f, 1.0f)
-		, std::vector<NodeIndex>{1, 4});
-	node3 = Node(maths::Vector2f(1.0f, -1.0f)
-		, std::vector<NodeIndex>{0, 4});
-	node4 = Node(maths::Vector2f(2.0f, 0.0f)
-		, std::vector<NodeIndex>{2, 3});
+	node0 = Node(maths::Vector2f(0.0f, 0.0f), {1, 3});
+	node1 = Node(maths::Vector2f(0.5f, 1.0f), {0, 2});
+	node2 = Node(maths::Vector2f(1.5f, 1.0f), {1, 4});
+	node3 = Node(maths::Vector2f(1.0f, -1.0f), {0, 4});
+	node4 = Node(maths::Vector2f(2.0f, 0.0f), {2, 3});
 	map.Reset();
 	expected_path = { 0, 3, 4 };
 	map.AddNode(node0);
@@ -100,16 +88,11 @@ TEST(Astar, Map_FindPath) {
 	EXPECT_FALSE(std::equal(path.begin(), path.end(), expected_path.begin()));
 
 	// A test with 5 nodes and 0 path.
-	node0 = Node(maths::Vector2f(0.0f, 0.0f)
-		, std::vector<NodeIndex>{1, 2});
-	node1 = Node(maths::Vector2f(3.0f, 2.0f)
-		, std::vector<NodeIndex>{0, 2});
-	node2 = Node(maths::Vector2f(4.0f, -1.0f)
-		, std::vector<NodeIndex>{0, 1, 3});
-	node3 = Node(maths::Vector2f(5.0f, 2.0f)
-		, std::vector<NodeIndex>{3});
-	node4 = Node(maths::Vector2f(8.0f, 1.0f)
-		, std::vector<NodeIndex>{});
+	node0 = Node(maths::Vector2f(0.0f, 0.0f), {1, 2});
+	node1 = Node(maths::Vector2f(3.0f, 2.0f), {0, 2});
+	node2 = Node(maths::Vector2f(4.0f, -1.0f), {0, 1, 3});
+	node3 = Node(maths::Vector2f(5.0f, 2.0f), {3});
+	node4 = Node(maths::Vector2f(8.0f, 1.0f), {});
 	map.Reset();
 	std::vector<NodeIndex> empty_path;
 	map.AddNode(node0);
@@ -141,4 +124,5 @@ TEST(Astar, Astar_PriorityQueue) {
 	queue.put(node_index_2, priority_2);
 	EXPECT_TRUE(queue.get() == node_index_2);
 }
+
 }  // namespace astar

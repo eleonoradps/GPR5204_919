@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#include <unordered_map>
 #include "paths/path.h"
 #include "paths/inverted_priority_queue.h"
 
@@ -32,10 +31,10 @@ std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 	
 	// This queue contains next nodes where we will check these neighbors.
 	PriorityQueue<NodeIndex, float> frontier;
-	frontier.put(start_node, 0);
+	frontier.put(start_node, 0.0f);
 
 	came_from_[start_node] = start_node;
-	cost_so_far_[start_node] = 0;
+	cost_so_far_[start_node] = 0.0f;
 	NodeIndex current;
 
 	while (!frontier.empty()) {
@@ -53,7 +52,7 @@ std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 				    graph_[current].position().x
 					- graph_[next].position().x
 					, graph_[current].position().y
-					- graph_[next].position().y }.Magnitude(); 
+					- graph_[next].position().y}.Magnitude(); 
 			/* Check if the node has been checked and if cost to go to the next
 			node from current is less than the lowest cost saved to go to the
 			next node.*/
@@ -67,7 +66,7 @@ std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 					    graph_[next].position().x
 						- graph_[end_node].position().x
 						, graph_[next].position().y
-						- graph_[end_node].position().y }.Magnitude();
+						- graph_[end_node].position().y}.Magnitude();
 				// Add to nodes where we will check these neighbors.
 				frontier.put(next, priority); 
 				/* Save the current node with the lowest cost to go to the next
@@ -89,7 +88,7 @@ std::vector<NodeIndex> Map::FindPath(NodeIndex start_node, NodeIndex end_node) {
 		path_.push_back(current);
 	}
 	// Reverse path to start with the start node.
-	return { path_.rbegin(), path_.rend() };
+	return {path_.rbegin(), path_.rend()};
 }
 
 }  // namespace path

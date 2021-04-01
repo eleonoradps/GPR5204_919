@@ -24,12 +24,13 @@ SOFTWARE.
 
 #pragma once
 
+#include <map>
 #include <vector>
 #include "maths/vector2.h"
 
 namespace path {
 	
-using NodeIndex = int;
+using NodeIndex = std::uint32_t;
 
 // This class is used to represent a node.
 class Node {
@@ -50,7 +51,7 @@ public:
 		return position_;
 	}
 
-	Node& operator=(Node node)  {
+	Node& operator=(Node node) {
 		position_ = node.position_;
 		neighbors_ = node.neighbors_;
 		return *this;
@@ -80,9 +81,9 @@ private:
 	std::vector<Node> graph_;
 	std::vector<NodeIndex> path_;
 	// The node with the lowest cost to go to the key node.
-	std::unordered_map<NodeIndex, NodeIndex> came_from_;
+	std::map<NodeIndex, NodeIndex> came_from_;
 	// The lowest cost to go to a node.
-	std::unordered_map<NodeIndex, float> cost_so_far_;
+	std::map<NodeIndex, float> cost_so_far_;
 };
 
 }  // namespace path
