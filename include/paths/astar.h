@@ -41,12 +41,12 @@ public:
 	}
 
 	// This function returns the neighbors of a node.
-	std::vector<NodeIndex> neighbors() const {
+	const std::vector<NodeIndex>& neighbors() const {
 		return neighbors_;
 	}
 
 	// This function returns the position of a node.
-	maths::Vector2f position() const {
+	const maths::Vector2f position() const {
 		return position_;
 	}
 
@@ -63,13 +63,14 @@ private:
 // This class is used to represent a map.
 class Map {
 public:
+	Map() = default;
 	// This function push a node in graph_.
-	void AddNode(Node node) {
+	void AddNode(const Node& node) {
 		graph_.push_back(node);
 	}
 	// This function find the lowest cost path with A* from the start node to the last node.
 	std::vector<NodeIndex> FindPath(NodeIndex start_node, NodeIndex end_node);
-	void Reset(){
+	void Reset() {
 		graph_.clear();
 		path_.clear();
 		came_from_.clear();
