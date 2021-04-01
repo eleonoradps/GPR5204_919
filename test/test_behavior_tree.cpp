@@ -117,3 +117,30 @@ TEST(Selector, SelectorTwoSuccess) {
 	EXPECT_EQ(s, Status::kSuccess);
 	EXPECT_EQ(a.currentChildIndex(), 1);
 }
+
+// Test small tree with one Selector and two Sequences.
+TEST(BehaviorTree, Tree) {
+	Behaviors children_a;
+
+	children_a.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children_a.push_back(std::make_unique<LeafTest>(Status::kFailure));
+	children_a.push_back(std::make_unique<LeafTest>(Status::kFailure));
+
+	Behaviors children_b;
+
+	children_b.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+	children_b.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+	children_b.push_back(std::make_unique<LeafTest>(Status::kSuccess));
+
+	Behaviors children_c;
+
+	children_c.push_back(std::make_unique<Sequence>(std::move(children_a)));
+	children_c.push_back(std::make_unique<Sequence>(std::move(children_b)));
+
+	Selector c(std::move(children_c));
+
+	Status s = c.Update();
+
+	EXPECT_EQ(s, Status::kSuccess);
+	EXPECT_EQ(c.currentChildIndex(), 1);
+}
