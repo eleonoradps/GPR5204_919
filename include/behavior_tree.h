@@ -26,11 +26,11 @@ SOFTWARE.
 
 #include <iostream>
 #include <vector>
+#include <memory>
 
 // Describes the States of the Behavior class.
 enum class Status {
-
-	kBaseStatus = 0,
+	kInvalid = 0,
 	kSuccess,
 	kFailure,
 	kRunning
@@ -38,10 +38,9 @@ enum class Status {
 
 // Abstract class, it is the basis of every other class in a Behavior Tree.
 class Behavior {
-
 public:
 	// Default constructor.
-	Behavior() : status_(Status::kBaseStatus) {}
+	Behavior() : status_(Status::kInvalid) {}
 
 	// Copy constructor.
 	Behavior(const Behavior& other) = delete;
@@ -83,7 +82,6 @@ using Behaviors = std::vector<std::unique_ptr<Behavior>>;
 
 // A node class that only has one leaf/child.
 class Decorator : public Behavior {
-
 public:
 	Decorator(std::unique_ptr<Behavior> child) : child_(std::move(child)) {}
 protected:
@@ -92,7 +90,6 @@ protected:
 
 // A node class with multiple leaves/children.
 class Composite : public Behavior {
-
 public:
 	Composite(Behaviors children) : children_(std::move(children)) {}
 	std::size_t currentChildIndex() const;
@@ -103,7 +100,6 @@ protected:
 
 // A Composite class that executes all its leaves/children one after another.
 class Sequence : public Composite {
-
 public:
 	using Composite::Composite;
 
@@ -119,7 +115,6 @@ public:
 // A Composite class that loops through its leaves/children and
 // selects the first that satisfies its condition.
 class Selector : public Composite {
-
 public:
 	using Composite::Composite;
 

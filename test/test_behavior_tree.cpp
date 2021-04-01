@@ -27,12 +27,10 @@ SOFTWARE.
 
 // Test class to mimick a basic Behavior.
 class LeafTest : public Behavior {
-
 public:
 	LeafTest(Status status) : status_(status) {}
 
-	Status Update() override
-	{
+	Status Update() override {
 		return status_;
 	}
 
@@ -42,7 +40,6 @@ private:
 
 // Test a successful Sequence.
 TEST(Sequence, SequenceAllSuccess) {
-
 	Behaviors children;
 
 	children.push_back(std::make_unique<LeafTest>(Status::kSuccess));
@@ -59,7 +56,6 @@ TEST(Sequence, SequenceAllSuccess) {
 
 // Test a failing Sequence.
 TEST(Sequence, SequenceAllFailure) {
-
 	Behaviors children;
 
 	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
@@ -76,7 +72,6 @@ TEST(Sequence, SequenceAllFailure) {
 
 // Test when no child satisfies the condition.
 TEST(Selector, SelectorAllFailure) {
-
 	Behaviors children;
 
 	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
@@ -93,7 +88,6 @@ TEST(Selector, SelectorAllFailure) {
 
 // Test when one child is successful.
 TEST(Selector, SelectorOneSuccess) {
-
 	Behaviors children;
 
 	children.push_back(std::make_unique<LeafTest>(Status::kFailure));
@@ -110,7 +104,6 @@ TEST(Selector, SelectorOneSuccess) {
 
 // Test when two children are successful to see if it stops at the first one.
 TEST(Selector, SelectorTwoSuccess) {
-
 	Behaviors children;
 
 	children.push_back(std::make_unique<LeafTest>(Status::kFailure));

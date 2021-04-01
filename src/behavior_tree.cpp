@@ -26,16 +26,13 @@ SOFTWARE.
 
 // Updates the Behavior's Status.
 Status Behavior::CheckStatus() {
-
 	if (status_ != Status::kRunning) {
-
 		Initialize();
 	}
 
 	status_ = Update();
 
 	if (status_ != Status::kRunning) {
-
 		Terminate();
 	}
 
@@ -43,39 +40,32 @@ Status Behavior::CheckStatus() {
 }
 
 Status Behavior::status() const {
-
 	return status_;
 }
 
-std::size_t Composite::currentChildIndex() const { 
-	
+std::size_t Composite::currentChildIndex() const {
 	return current_child_index_; 
 }
 
 // Sets the base Status of the Behavior.
 // Here sets the children index at 0.
 void Sequence::Initialize() {
-
 	current_child_index_ = 0;
 }
 
 // This is where the action/behavior is ran. 
 // Returns Status if failure or success.
 Status Sequence::Update() {
-
 	while (true) {
-
 		Status s = (children_[current_child_index_])->CheckStatus();
 
 		if (s != Status::kSuccess) {
-
 			return s;
 		}
 
 		++current_child_index_;
 
 		if (current_child_index_ == children_.size()) {
-
 			return Status::kSuccess;
 		}
 	}
@@ -84,27 +74,22 @@ Status Sequence::Update() {
 // Sets the base Status of the Behavior.
 // Here sets the children index at 0.
 void Selector::Initialize() {
-
 	current_child_index_ = 0;
 }
 
 // This is where the action/behavior is ran. 
 // Returns Status if failure or success.
 Status Selector::Update() {
-
 	while (true) {
-
 		Status s = (children_[current_child_index_])->CheckStatus();
 
 		if (s != Status::kFailure) {
-
 			return s;
 		}
 
 		++current_child_index_;
 
-		if (current_child_index_ == children_.size())
-		{
+		if (current_child_index_ == children_.size()) {
 			return Status::kFailure;
 		}
 	}
