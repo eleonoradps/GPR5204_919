@@ -26,6 +26,7 @@ SOFTWARE.
 #include <omp.h>
 #include <cassert>
 
+
 bool Raytracer::ObjectIntersect(maths::Ray3& ray,
 	std::vector<maths::Sphere>& spheres, maths::Plane plane, Material& material, hitInfos& hitInfo, float& distance)
 {
@@ -45,16 +46,9 @@ bool Raytracer::ObjectIntersect(maths::Ray3& ray,
 	if(distance!=1000000.0f)
 	{
 		return true;
-	}
-	else
-	{	
-		return false;
-	}
-	/*if(ray.IntersectPlane(plane,tmpHitPosition))
-	{
-		material = plane.material();
-		return true;
-	}*/
+	}	
+	return false;
+	
 }
 
 maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
@@ -64,6 +58,7 @@ maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
 	Material hitObject_material;
 	hitInfos hitInfo;
 	float distance;
+	bool inLight = true;
 	
 	if (!ObjectIntersect(ray, spheres, scenePlane, hitObject_material, hitInfo,distance))
 	{
@@ -72,34 +67,40 @@ maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
 	else
 	{
 		maths::Vector3f light_direction{ light.position - hitInfo.hitPosition };
-		light_direction.Normalize();
+		//light_direction.Normalize();
+
 		maths::Vector3f inverseLightDirection = maths::Vector3f(
 			(-1) * light_direction.x, (-1) * light_direction.y, (-1) * light_direction.z);
-
+		inverseLightDirection.Normalize();
+		
+		maths::Vector3f light_normal(light.position - hitInfo.hitPosition);
+		light_normal.Normalize();
 		//Compute shadow ray to check if point is in shadow
 		maths::Vector3f shadowRayOrigin(hitInfo.hitPosition + hitInfo.normal*1e-4);
-		maths::Ray3 shadowRay(shadowRayOrigin, inverseLightDirection);
+		maths::Ray3 shadowRay(shadowRayOrigin, light_normal);
 		Material tmpMaterial;
 		hitInfos shadowHitInfo;
 		float tmpDistance;
 		if(ObjectIntersect(shadowRay,spheres,scenePlane,tmpMaterial,shadowHitInfo,tmpDistance))
 		{
-			return hitObject_material.color() * 0.0f;
+			/*maths::Vector3f blue(0.0f, 0.0f, 255.0f);
+			hitObject_material.set_color(blue);*/
+			//return hitObject_material.color() * 0.0f;
+			inLight = false;
 		}
 
+		float ligth_value = maths::Vector3f::Dot(hitInfo.normal, light_normal);
+		//assert(ligth_value >= 0.0f);
+		if(ligth_value< 0.0f)
+		{
+			ligth_value = 0.0f;
+		}
+		
 		//Point is not in the shadow
-		//
-		//float dt = (light.position - ray.hit_position()).Magnitude();
-		maths::Vector3f inverseDirection = maths::Vector3f((-1) * rayDirection.x, (-1)
-			* rayDirection.y, (-1) * rayDirection.z);
 
-		//float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseLightDirection));
-		//float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseDirection));
-		
-		//return (hitObject_material.color() * dt) * 0.5f;
-		
-		//return (hitObject_material.color() * facingRatio);
-		return hitObject_material.color();
+		float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseLightDirection));
+		return (hitObject_material.color()* ligth_value * inLight);
+		//return hitObject_material.color();
 	}
 }
 

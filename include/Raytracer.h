@@ -34,9 +34,7 @@ SOFTWARE.
 
 
 struct Light {
-	Light() = default;
-	//maths::Vector3f position{ 20.0f,20.0f,20.0f };
-	maths::Vector3f position{ 35.0f,0.0f,-16.0f };
+	maths::Vector3f position{ 20.0f,2.0f,0.0f };
 	maths::Vector3f direction{ 1.0f,0.0f,0.0f };
 };
 
@@ -58,7 +56,7 @@ public:
 
 	void Render(int width, int height, float fov, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane,Light light);
 
-	void SceneGeneration(const int sphereNumber, const float sphereMaxSize, const float sphereMinSize);
+	//void SceneGeneration(const int sphereNumber, const float sphereMaxSize, const float sphereMinSize);
 	
 private:
 	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };

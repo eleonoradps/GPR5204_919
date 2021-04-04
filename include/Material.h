@@ -33,6 +33,7 @@ public:
 
 	maths::Vector3f color() const { return color_; }
 	float reflexionIndex() const { return reflexionIndex_; }
+	void set_color(const maths::Vector3f& color) { color_ = color; }
 	
 private:
 	maths::Vector3f color_{255.0f,255.0f,255.0f};
