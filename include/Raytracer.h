@@ -48,16 +48,42 @@ struct hitInfos
 class Raytracer {
 public:
 
-	/*maths::Vector3f Reflect();*/
+	//Set bases value and variable for raytracer rendering
+	void SetScene(std::vector<maths::Sphere>& spheres, Light light, int heigth, int width, float fov)
+	{
+		spheres_ = spheres;
+		light_ = light;
+		heigth_ = heigth;
+		width_ = width;
+		fov_ = fov;
+		int total = width_ * heigth_;
+		frameBuffer_ = std::vector<maths::Vector3f>(total);
+	}
 
-	bool ObjectIntersect(maths::Ray3& ray, std::vector<maths::Sphere>& spheres, maths::Plane plane, Material& material, hitInfos& hitInfos, float& distance);
-	
-	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection, std::vector<maths::Sphere> &spheres, maths::Plane scenePlane, Light light);
+	//Cast ray for each pixel to check collision and render objects
+	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection);
 
-	void Render(int width, int height, float fov, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane,Light light);
+	//Check intersection between the ray and each object in the scene
+	bool ObjectIntersect(maths::Ray3& ray, Material& material, hitInfos& hitInfos, float& distance);
+
+	//Cast a shadow ray to check intersection with objects and render shadows
+	bool ShadowRay(maths::Vector3f hitPosition, maths::Vector3f hitNormal, maths::Vector3f lightNormal);
+
+	//Base raytracing function that will start raytracing rendering
+	void Render();
+
+	//Write scene result into a .ppm image
+	void WriteImage();
 
 	//void SceneGeneration(const int sphereNumber, const float sphereMaxSize, const float sphereMinSize);
+
 	
 private:
 	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };
+	std::vector<maths::Sphere> spheres_;
+	Light light_;
+	int heigth_;
+	int width_;
+	float fov_;
+	std::vector<maths::Vector3f> frameBuffer_;
 };

@@ -28,18 +28,18 @@ SOFTWARE.
 
 
 bool Raytracer::ObjectIntersect(maths::Ray3& ray,
-	std::vector<maths::Sphere>& spheres, maths::Plane plane, Material& material, hitInfos& hitInfo, float& distance)
+	 Material& material, hitInfos& hitInfo, float& distance)
 {
 	maths::Vector3f tmpHitPosition;
 	distance = 1000000.0f;
-	for (int i = 0; i < spheres.size(); ++i)
+	for (int i = 0; i < spheres_.size(); ++i)
 	{
 		hitInfo.distance = 10000000.0f;
 		// Only render intersection for the nearest sphere
-		if (ray.IntersectSphere(spheres[i],hitInfo.hitPosition,hitInfo.distance) && hitInfo.distance< distance)
+		if (ray.IntersectSphere(spheres_[i],hitInfo.hitPosition,hitInfo.distance) && hitInfo.distance< distance)
 		{
-			hitInfo.normal= maths::Vector3f(hitInfo.hitPosition - spheres[i].center()).Normalized();
-			material = spheres[i].material();
+			hitInfo.normal= maths::Vector3f(hitInfo.hitPosition - spheres_[i].center()).Normalized();
+			material = spheres_[i].material();
 			distance = hitInfo.distance;
 		}
 	}
@@ -52,7 +52,7 @@ bool Raytracer::ObjectIntersect(maths::Ray3& ray,
 }
 
 maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
-	maths::Vector3f rayDirection, std::vector<maths::Sphere>& spheres, maths::Plane scenePlane, Light light)
+	maths::Vector3f rayDirection)
 {
 	maths::Ray3 ray{ cameraOrigin, rayDirection };
 	Material hitObject_material;
@@ -60,37 +60,26 @@ maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
 	float distance;
 	bool inLight = true;
 	
-	if (!ObjectIntersect(ray, spheres, scenePlane, hitObject_material, hitInfo,distance))
+	if (!ObjectIntersect(ray,hitObject_material, hitInfo,distance))
 	{
 		return backgroundColor_;
 	}
 	else
 	{
-		maths::Vector3f light_direction{ light.position - hitInfo.hitPosition };
+		maths::Vector3f light_direction{ light_.position - hitInfo.hitPosition };
 		//light_direction.Normalize();
 
 		maths::Vector3f inverseLightDirection = maths::Vector3f(
 			(-1) * light_direction.x, (-1) * light_direction.y, (-1) * light_direction.z);
 		inverseLightDirection.Normalize();
 		
-		maths::Vector3f light_normal(light.position - hitInfo.hitPosition);
+		maths::Vector3f light_normal(light_.position - hitInfo.hitPosition);
 		light_normal.Normalize();
+		
 		//Compute shadow ray to check if point is in shadow
-		maths::Vector3f shadowRayOrigin(hitInfo.hitPosition + hitInfo.normal*1e-4);
-		maths::Ray3 shadowRay(shadowRayOrigin, light_normal);
-		Material tmpMaterial;
-		hitInfos shadowHitInfo;
-		float tmpDistance;
-		if(ObjectIntersect(shadowRay,spheres,scenePlane,tmpMaterial,shadowHitInfo,tmpDistance))
-		{
-			/*maths::Vector3f blue(0.0f, 0.0f, 255.0f);
-			hitObject_material.set_color(blue);*/
-			//return hitObject_material.color() * 0.0f;
-			inLight = false;
-		}
+		inLight = ShadowRay(hitInfo.hitPosition, hitInfo.normal, light_normal);
 
 		float ligth_value = maths::Vector3f::Dot(hitInfo.normal, light_normal);
-		//assert(ligth_value >= 0.0f);
 		if(ligth_value< 0.0f)
 		{
 			ligth_value = 0.0f;
@@ -98,46 +87,65 @@ maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
 		
 		//Point is not in the shadow
 
-		float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseLightDirection));
+		//float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseLightDirection));
 		return (hitObject_material.color()* ligth_value * inLight);
 		//return hitObject_material.color();
 	}
 }
 
-void Raytracer::Render(int width, int height, float fov, std::vector<maths::Sphere>& spheres,maths::Plane scenePlane, Light light)
+void Raytracer::Render()
 {
-	int total = width * height;
-	std::vector<maths::Vector3f> frameBuffer(total); // will hold the color for each pixel;
-	
 	#pragma omp parallel for
-	for (int i = 0; i < height; ++i)
+	for (int i = 0; i < heigth_; ++i)
 	{
-		for (int j = 0; j < width; ++j)
+		for (int j = 0; j < width_; ++j)
 		{
-			double dir_x = (j + 0.5f) - width / 2.0;
-			double dir_y = -(i + 0.5f) + height / 2.0;
-			double dir_z = -height / (2.0 * tan(fov / 2.0));
+			double dir_x = (j + 0.5f) - width_ / 2.0;
+			double dir_y = -(i + 0.5f) + heigth_ / 2.0;
+			double dir_z = -heigth_ / (2.0 * tan(fov_ / 2.0));
 
 			maths::Vector3f rayDirection = maths::Vector3f(dir_x, dir_y, dir_z).Normalized();
 
-			frameBuffer[ j + i *width] = RayCast(maths::Vector3f(0.0f, 0.0f, 0.0f),
-				rayDirection, spheres,scenePlane, light);
+			frameBuffer_[ j + i *width_] = RayCast(maths::Vector3f(0.0f, 0.0f, 0.0f),
+				rayDirection);
 		}
 	}
 
-	std::ofstream ofs("./image.ppm", std::ios::out | std::ios::binary);
-	ofs << "P6\n" << width << " " << height << "\n255\n";
-	for (uint32_t i = 0; i < height * width; ++i) {
+	WriteImage();
+}
 
-		char r = (char)(frameBuffer[i].x);
-		char g = (char)(frameBuffer[i].y);
-		char b = (char)(frameBuffer[i].z);
+void Raytracer::WriteImage()
+{
+	std::ofstream ofs("./image.ppm", std::ios::out | std::ios::binary);
+	ofs << "P6\n" << width_ << " " << heigth_ << "\n255\n";
+	for (uint32_t i = 0; i < heigth_ * width_; ++i) {
+
+		char r = (char)(frameBuffer_[i].x);
+		char g = (char)(frameBuffer_[i].y);
+		char b = (char)(frameBuffer_[i].z);
 
 		ofs << r << g << b;
 	}
-
 	ofs.close();
 }
+
+bool Raytracer::ShadowRay(maths::Vector3f hitPosition, maths::Vector3f hitNormal, maths::Vector3f lightNormal)
+{
+	maths::Vector3f shadowRayOrigin(hitPosition + hitNormal * 1e-4);
+	maths::Ray3 shadowRay(shadowRayOrigin, lightNormal);
+	Material tmpMaterial;
+	hitInfos shadowHitInfo;
+	float tmpDistance;
+	if (ObjectIntersect(shadowRay, tmpMaterial, shadowHitInfo, tmpDistance))
+	{
+		/*maths::Vector3f blue(0.0f, 0.0f, 255.0f);
+		hitObject_material.set_color(blue);*/
+		//return hitObject_material.color() * 0.0f;
+		return false;
+	}
+	return true;
+}
+
 
 
 //void Raytracer::SceneGeneration(const int sphereNumber, const int sphereMaxSize, const int sphereMinSize)

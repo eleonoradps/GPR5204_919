@@ -51,6 +51,6 @@ TEST(Raytracing, Raytracing_ImageOutput)
 
 	Raytracer raytracer;
 	//double fov = 3.14159265358979323846 / 3;
-
-	raytracer.Render(width, heigth, fov, spheres, plane, light);
+	raytracer.SetScene(spheres, light, heigth, width, fov);
+	raytracer.Render();
 }
