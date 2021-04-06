@@ -64,7 +64,7 @@ public:
 	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection);
 
 	//Check intersection between the ray and each object in the scene
-	bool ObjectIntersect(maths::Ray3& ray, Material& material, hitInfos& hitInfos, float& distance);
+	bool ObjectIntersect(maths::Ray3& ray, Material& hitMaterial, hitInfos& hitInfos, float& distance);
 
 	//Cast a shadow ray to check intersection with objects and render shadows
 	bool ShadowRay(maths::Vector3f hitPosition, maths::Vector3f hitNormal, maths::Vector3f lightNormal);
@@ -74,6 +74,8 @@ public:
 
 	//Write scene result into a .ppm image
 	void WriteImage();
+
+	std::vector<maths::Vector3f> frameBuffer() const { return frameBuffer_; }
 
 	//void SceneGeneration(const int sphereNumber, const float sphereMaxSize, const float sphereMinSize);
 

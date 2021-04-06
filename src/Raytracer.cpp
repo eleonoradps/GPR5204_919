@@ -28,7 +28,7 @@ SOFTWARE.
 
 
 bool Raytracer::ObjectIntersect(maths::Ray3& ray,
-	 Material& material, hitInfos& hitInfo, float& distance)
+	 Material& hitMaterial, hitInfos& hitInfo, float& distance)
 {
 	maths::Vector3f tmpHitPosition;
 	distance = 1000000.0f;
@@ -39,7 +39,7 @@ bool Raytracer::ObjectIntersect(maths::Ray3& ray,
 		if (ray.IntersectSphere(spheres_[i],hitInfo.hitPosition,hitInfo.distance) && hitInfo.distance< distance)
 		{
 			hitInfo.normal= maths::Vector3f(hitInfo.hitPosition - spheres_[i].center()).Normalized();
-			material = spheres_[i].material();
+			hitMaterial = spheres_[i].material();
 			distance = hitInfo.distance;
 		}
 	}
@@ -88,7 +88,10 @@ maths::Vector3f Raytracer::RayCast(maths::Vector3f cameraOrigin,
 		//Point is not in the shadow
 
 		//float facingRatio = std::max(0.0f, hitInfo.normal.Dot(inverseLightDirection));
-		return (hitObject_material.color()* ligth_value * inLight);
+		hitObject_material.set_color(hitObject_material.color() * ligth_value * inLight);
+		return (hitObject_material.color());
+		
+		
 		//return hitObject_material.color();
 	}
 }
@@ -111,7 +114,7 @@ void Raytracer::Render()
 		}
 	}
 
-	WriteImage();
+	//WriteImage();
 }
 
 void Raytracer::WriteImage()

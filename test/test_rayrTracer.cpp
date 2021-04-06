@@ -17,8 +17,8 @@ TEST(Raytracing, Raytracing_ImageOutput)
 	Material materialTest3(1.0f, green);
 
 
-	int width = 1920;
-	int heigth = 1080;
+	int width = 500;
+	int heigth = 500;
 	float fov = 51.52f;
 
 	maths::Plane plane(maths::Vector3f(0.0f, -10.0f, -10.0f), maths::Vector3f(0.0f, 1.0f, 0.0f));
@@ -41,7 +41,7 @@ TEST(Raytracing, Raytracing_ImageOutput)
 
 	Light light;
 	std::vector<maths::Sphere> spheres;
-	//spheres.push_back(sphere4);
+	spheres.push_back(sphere4);
 	spheres.push_back(sphere3);
 	spheres.push_back(sphere1);
 	/*spheres.push_back(sphere5);
@@ -53,4 +53,80 @@ TEST(Raytracing, Raytracing_ImageOutput)
 	//double fov = 3.14159265358979323846 / 3;
 	raytracer.SetScene(spheres, light, heigth, width, fov);
 	raytracer.Render();
+}
+
+TEST(Raytracing, Color_Output)
+{
+	int width = 50;
+	int heigth = 50;
+	float fov = 51.52f;
+	
+	maths::Vector3f red(255.0f, 0.0f, 0.0f);
+	Material materialTest(1.0f, red);
+	//Sphere is placed around the middle of the frame
+	maths::Sphere sphere(50.0f, maths::Vector3f(0.0f, 0.0f, -80.0f));
+	sphere.set_material(materialTest);
+
+	std::vector<maths::Sphere> spheres;
+	spheres.push_back(sphere);
+
+	Light light;
+	
+	Raytracer raytracer;
+	raytracer.SetScene(spheres, light, heigth, width, fov);
+	raytracer.Render();
+
+	maths::Vector3f backgroundColor{ 150.0f,200.0f,255.0f };
+
+	maths::Vector3f color = maths::Vector3f(raytracer.frameBuffer()[1].x, raytracer.frameBuffer()[1].y, raytracer.frameBuffer()[1].z);
+
+	//Test if the first pixel (top left) is the same color as the background color. Meaning no sphere in this pixel.
+	EXPECT_EQ(color.x, backgroundColor.x);
+
+	maths::Vector3f color2 = maths::Vector3f(raytracer.frameBuffer()[125].x, raytracer.frameBuffer()[125].y, raytracer.frameBuffer()[125].z);
+	//Test if the middle pixel is not the same color as the background. Meaning the sphere is in the pixel.
+	EXPECT_NE(color2.x, backgroundColor.x);
+}
+//
+TEST(Raytracing, Correct_Depth_Rendering)
+{
+	int width = 50;
+	int heigth = 50;
+	float fov = 51.52f;
+
+	maths::Vector3f red(255.0f, 0.0f, 0.0f);
+	maths::Vector3f green(0.0f, 128.0f, 0.0f);
+	Material materialTest(1.0f, red);
+	Material materialTest2(1.0f, green);
+
+	//Sphere are placed around the middle of the frame, one behind the other
+	maths::Sphere sphere(50.0f, maths::Vector3f(0.0f, 0.0f, -80.0f));
+	maths::Sphere sphere2(50.0f, maths::Vector3f(0.0f, 0.0f, -85.0f));
+
+	sphere.set_material(materialTest);
+	sphere2.set_material(materialTest2);
+
+	std::vector<maths::Sphere> spheres;
+	spheres.push_back(sphere2);
+	spheres.push_back(sphere);
+
+	Light light;
+
+	Raytracer raytracer;
+	raytracer.SetScene(spheres, light, heigth, width, fov);
+
+	maths::Vector3f rayOrigin = maths::Vector3f(0.0f, 0.0f, 0.0f);
+	maths::Vector3f rayDirection = maths::Vector3f(1.0f, 0.0f, 0.0f);
+
+	maths::Ray3 ray(rayOrigin, rayDirection);
+	Material hitMaterial;
+	hitInfos hit_infos;
+	float distance;
+	raytracer.ObjectIntersect(ray, hitMaterial, hit_infos, distance);
+
+	maths::Vector3f expectedMaterialColor = spheres[1].material().color();
+	maths::Vector3f testedMaterialColor = hitMaterial.color();
+	
+	//Test if the returned material color is the material from the closest sphere and not the first one in the list;
+	EXPECT_EQ(expectedMaterialColor.x, testedMaterialColor.x);
 }
