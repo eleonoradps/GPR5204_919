@@ -24,68 +24,91 @@ SOFTWARE.
 */
 
 #include <vector>
-#include <fstream>
-#include <algorithm>
 
 #include "maths/vector3.h"
 #include "maths/sphere.h"
 #include "maths/ray3.h"
 #include "maths/plane.h"
 
+namespace raytracing {
 
 struct PointLight {
 	maths::Vector3f position{ 10.0f,10.0f,0.0f };
 };
 
-struct hitInfos
+struct HitInfos
 {
 	maths::Vector3f normal;
-	maths::Vector3f hitPosition;
+	maths::Vector3f hit_position;
 	float distance;
 };
 
 class Raytracer {
 public:
-
+	Raytracer() = default;
 	//Set bases value and variable for raytracer rendering
-	void SetScene(std::vector<maths::Sphere>& spheres, std::vector<maths::Plane>& planes, PointLight light, int heigth, int width, float fov)
+	void SetScene(
+		std::vector<maths::Sphere>& spheres,
+		std::vector<maths::Plane>& planes,
+		const PointLight light,
+		const int& heigth,
+		const int& width,
+		const float& fov,
+		const double& bias)
 	{
 		spheres_ = spheres;
 		planes_ = planes;
 		light_ = light;
-		heigth_ = heigth;
+		height_ = heigth;
 		width_ = width;
 		fov_ = fov;
-		int total = width_ * heigth_;
-		frameBuffer_ = std::vector<maths::Vector3f>(total);
+		int total = width_ * height_;
+		frame_buffer_ = std::vector<maths::Vector3f>(total);
+		bias_ = bias;
 	}
 
 	//Cast ray for each pixel to check collision and render objects
-	maths::Vector3f RayCast(maths::Vector3f cameraOrigin, maths::Vector3f rayDirection,  const int& depth = 0);
+	maths::Vector3f RayCast(
+		const maths::Vector3f& origin,
+		const maths::Vector3f& ray_direction,
+		const int& depth = 0);
 
 	//Check intersection between the ray and each object in the scene
-	bool ObjectIntersect(maths::Ray3& ray, Material& hitMaterial, hitInfos& hitInfos, float& distance);
+	bool ObjectIntersect(
+		maths::Ray3& ray, 
+		Material& hit_material, 
+		HitInfos& hit_infos, 
+		float& distance);
 
 	//Cast a shadow ray to check intersection with objects and render shadows
-	bool ShadowRay(maths::Vector3f hitPosition, maths::Vector3f hitNormal, maths::Vector3f lightNormal);
+	bool ShadowRay(
+		const maths::Vector3f& hit_position, 
+		const maths::Vector3f& hit_normal, 
+		const maths::Vector3f& light_normal);
+		
+	//Calculate reflexion direction for the reflexion ray
+	maths::Vector3f Reflect(
+		const maths::Vector3f& ray_direction, 
+		const maths::Vector3f& hit_normal);
 
-	maths::Vector3f Reflect(maths::Vector3f& rayDirection, maths::Vector3f& hitNormal);
-	
 	//Base raytracing function that will start raytracing rendering
 	void Render();
 
 	//Write scene result into a .ppm image
 	void WriteImage();
 
-	std::vector<maths::Vector3f> frameBuffer() const { return frameBuffer_; }
-	
+	std::vector<maths::Vector3f> frameBuffer() const { return frame_buffer_; }
+
 private:
-	maths::Vector3f backgroundColor_{ 150.0f,200.0f,255.0f };
+	maths::Vector3f background_color_{ 150.0f,200.0f,255.0f };
 	std::vector<maths::Sphere> spheres_;
 	std::vector<maths::Plane> planes_;
 	PointLight light_;
-	int heigth_;
+	int height_;
 	int width_;
 	float fov_;
-	std::vector<maths::Vector3f> frameBuffer_;
-};
+	std::vector<maths::Vector3f> frame_buffer_;
+	double bias_;
+	};
+	
+}// namespace raytracing

@@ -29,13 +29,13 @@ SOFTWARE.
 class Material {
 public:
 	Material() = default;
-	Material(float reflexionIndex, maths::Vector3f color) : reflexionIndex_(reflexionIndex), color_(color) {}
+	Material(float reflexion_index, maths::Vector3f color) : reflexion_index_(reflexion_index), color_(color) {}
 
 	maths::Vector3f color() const { return color_; }
-	float reflexionIndex() const { return reflexionIndex_; }
+	float reflexion_index() const { return reflexion_index_; }
 	void set_color(const maths::Vector3f& color) { color_ = color; }
-	
+
 private:
-	maths::Vector3f color_{255.0f,255.0f,255.0f};
-	float reflexionIndex_ = 1.0f;
+	maths::Vector3f color_{ 255.0f,255.0f,255.0f };
+	float reflexion_index_ = 1.0f;
 };

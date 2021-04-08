@@ -26,7 +26,7 @@ SOFTWARE.
 #include <math.h>
 #include "maths/vector3.h"
 #include "aabb3.h"
-#include "Material.h"
+#include "raytracing/material.h"
 
 namespace maths {
 class Sphere {

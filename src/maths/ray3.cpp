@@ -81,7 +81,7 @@ bool Ray3::IntersectSphere(const Sphere& sphere, Vector3f& hitPosition, float& d
     //if (t0 < 0) return false;
     //distance = t0;
     ////distance = (t0 < t1) ? t0 : t1;
-    //hitPosition = origin_ + direction_ * distance;
+    //hit_position = origin_ + direction_ * distance;
     //
     return true;
 

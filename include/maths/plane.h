@@ -24,7 +24,7 @@ SOFTWARE.
 */
 
 #include "maths/vector3.h"
-#include "Material.h"
+#include "raytracing/material.h"
 
 namespace maths
 {

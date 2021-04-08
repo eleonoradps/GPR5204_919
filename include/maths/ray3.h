@@ -32,7 +32,7 @@ namespace maths {
 class Ray3 {
 public:
 	Ray3() = default;
-	Ray3(Vector3f& origin, Vector3f& direction) : origin_(origin), direction_(direction) {}
+	Ray3(const Vector3f& origin, const Vector3f& direction) : origin_(origin), direction_(direction) {}
 
 	// Return a point along the ray from a given value
 	Vector3f PointInRay(float value) const {
